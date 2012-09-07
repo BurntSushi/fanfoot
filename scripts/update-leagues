@@ -1,0 +1,17 @@
+#!/usr/bin/env python2
+
+import nflgame.live
+
+import fantasy.league as league
+
+keys = [
+    ('yahoo', '273.l.104464'),
+    ('yahoo', '273.l.695305'),
+    ('yahoo', '273.l.820118'),
+]
+
+year, week = nflgame.live.current_year_and_week()
+
+conn = league.Conn()
+conn.load(week, keys)
+
