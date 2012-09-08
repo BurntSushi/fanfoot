@@ -45,7 +45,6 @@ class Conn (object):
         teams = []
         for row in cursor:
             t = Team(id=row['team_id'], name=row['team_name'])
-            t.__str__ = lambda self: '%s (%d)' % (t.name, t.id)
             teams.append(t)
         return sorted(teams, key=lambda t: t.id)
 
