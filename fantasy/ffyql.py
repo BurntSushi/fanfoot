@@ -5,9 +5,10 @@ import os.path
 import yql
 import yql.storage
 
-_cur_dir = os.path.split(__file__)[0]
-_json_secrets = os.path.join(_cur_dir, 'yql.json')
-_cache_dir = os.path.join(_cur_dir, '.cache')
+import fantasy
+
+_json_secrets = os.path.join(fantasy.cur_dir, 'yql.json')
+_cache_dir = os.path.join(fantasy.cur_dir, '.cache')
 _secrets = json.loads(open(_json_secrets).read())
 
 _key = _secrets['key']

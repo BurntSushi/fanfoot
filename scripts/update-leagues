@@ -1,17 +1,204 @@
 #!/usr/bin/env python2
 
+import re
+import urllib2
+
+from bs4 import BeautifulSoup
+
 import nflgame.live
 
-import fantasy.league as league
+import fantasy
+import fantasy.ffyql
+import fantasy.league
 
-keys = [
-    ('yahoo', '273.l.104464'),
-    ('yahoo', '273.l.695305'),
-    ('yahoo', '273.l.820118'),
+espn_roster_url = 'http://games.espn.go.com/ffl/' \
+                  'leaguerosters?leagueId=%s&weekId=%d'
+espn_matchup_url = 'http://games.espn.go.com/ffl/schedule?leagueId=%s'
+
+positions = [
+    ['QB'],
+    ['RB'],
+    ['WR'],
+    ['TE'],
+    ['K'],
+    ['DEF', 'D/ST'],
+    ['BN', 'BEN', 'Bench'],
+    ['FLEX', 'W/R/T', 'W/R', 'RB/WR'],
 ]
 
-year, week = nflgame.live.current_year_and_week()
+yahoo_aliases = {
+    'Stevie Johnson': 'Steve Johnson',
+}
 
-conn = league.Conn()
-conn.load(week, keys)
+def find_player_id(name, team):
+    hits = nflgame.find(name, team)
+    if len(hits) == 0:
+        assert False, '%s (%s)' % (name, team)
+        return "0"
+    assert len(hits) == 1, \
+        'Found %d hits for "%s": %s' % (len(hits), name, map(str, hits))
+    return hits[0].playerid
+
+
+def load_yahoo_rosters(conn, lgconf, week):
+    cursor = fantasy.ffyql.yqlquery('''
+        SELECT * FROM fantasysports.teams.roster
+        WHERE league_key = '%s' AND week = %d
+    ''' % (lgconf.key, week))
+    conn.delete_rosters(lgconf, week)
+    for row in cursor.rows:
+        for player in row['roster']['players']['player']:
+            name = standard_player_name(player['name']['full'])
+            team = nflgame.standard_team(player['editorial_team_abbr'])
+            pos = standard_position(player['selected_position']['position'])
+            if player['display_position'] == 'DEF':
+                playerid = "0"
+                name = team
+            else:
+                playerid = find_player_id(name, team)
+            assert team is not None, \
+                'Bad team: %s' % player['editorial_team_abbr']
+
+            conn.add_roster(
+                lgconf=lgconf,
+                team_id=row['team_id'],
+                team_name=row['name'],
+                week=week,
+                player_gsisid=playerid,
+                player_name=name,
+                player_team=team,
+                player_pos=pos)
+    conn.commit()
+
+def load_yahoo_matchups(conn, lgconf, week):
+    cursor = fantasy.ffyql.yqlquery('''
+        SELECT * FROM fantasysports.leagues.scoreboard
+        WHERE league_key = '%s' AND week = %d
+    ''' % (lgconf.key, week))
+    conn.delete_matchups(lgconf, week)
+
+    for matchup in cursor.rows[0]['scoreboard']['matchups']['matchup']:
+        m = matchup['teams']['team']
+        conn.add_matchup(
+            lgconf=lgconf,
+            week=week,
+            team1_id=m[0]['team_id'],
+            team1_name=m[0]['name'],
+            team2_id=m[1]['team_id'],
+            team2_name=m[1]['name'])
+    conn.commit()
+
+def load_espn_rosters(conn, lgconf, week):
+    soup = espn_soup(espn_roster_url % (lgconf.key, week))
+    teams = get_espn_team_map(soup)
+    conn.delete_rosters(lgconf, week)
+
+    plinks = soup.find_all('a', tab="null",
+                           seasonid=lgconf.season, leagueid=lgconf.key)
+    for plink in plinks:
+        name = plink.get_text().replace('D/ST', '').strip()
+        team_pos = plink.next_sibling.strip(' \r\n,*').strip()
+        play_pos = plink.find_parent('tr').find('td').get_text().strip()
+        play_pos = standard_position(play_pos)
+
+        if team_pos.lower() == 'd/st':
+            playerid = "0"
+            name = nflgame.standard_team(name)
+            team = name
+            assert team is not None, 'Bad team: %s' % plink.get_text().strip()
+        else:
+            team, pos = team_pos.split()
+            team = nflgame.standard_team(team)
+            playerid = find_player_id(name, team)
+            assert team is not None, 'Bad team: %s' % team_pos
+
+        team_link = plink.find_parent('table').find('a')['href']
+        team_id = re.search('teamId=([0-9]+)', team_link).group(1)
+
+        conn.add_roster(
+            lgconf=lgconf,
+            team_id=team_id,
+            team_name=teams[team_id],
+            week=week,
+            player_gsisid=playerid,
+            player_name=name,
+            player_team=team,
+            player_pos=play_pos)
+
+    conn.commit()
+
+def load_espn_matchups(conn, lgconf, week):
+    soup = espn_soup(espn_matchup_url % lgconf.key)
+    conn.delete_matchups(lgconf, week)
+
+    matchup_tds = soup.select('td[nobr]')
+    for i in xrange(0, len(matchup_tds), 2):
+        team1 = matchup_tds[i]
+        team2 = matchup_tds[i+1]
+        team1_name = list(team1.stripped_strings)[0]
+        team2_name = list(team2.stripped_strings)[0]
+
+        team1_id = re.search('teamId=([0-9]+)', team1.a['href']).group(1)
+        team2_id = re.search('teamId=([0-9]+)', team2.a['href']).group(1)
+
+        this_week = team1.find_parent('tr')
+        this_week = this_week.find_previous_sibling('tr', 'tableHead')
+        this_week = this_week.get_text().strip()
+        this_week = int(this_week.replace('WEEK', '').strip())
+
+        conn.add_matchup(
+            lgconf=lgconf,
+            week=this_week,
+            team1_id=team1_id,
+            team1_name=team1_name,
+            team2_id=team2_id,
+            team2_name=team2_name)
+    conn.commit()
+
+def get_espn_team_map(soup):
+    teams = {}
+    for a in soup.find('ul', id='games-tabs1').find_all('a'):
+        name = list(a.stripped_strings)[0]
+        teamid = re.search('teamId=([0-9]+)', a['href']).group(1)
+        teams[teamid] = name
+    return teams
+
+def espn_soup(url):
+    html = unicode_spaces(urllib2.urlopen(url).read())
+    return BeautifulSoup(html)
+
+def standard_player_name(name):
+    for bad, good in yahoo_aliases.iteritems():
+        if name.lower() == bad.lower():
+            return good
+    return name
+
+def standard_position(pos):
+    pos = pos.lower()
+    for variants in positions:
+        for variant in variants:
+            if pos == variant.lower():
+                return variants[0]
+    assert False, 'Could not find standard position for %s' % pos
+
+def unicode_spaces(text):
+    text = list(text)
+    for i, o in enumerate(map(ord, text)):
+        if o > 127:
+            text[i] = ' '
+    return ''.join(text)
+
+if __name__ == '__main__':
+    year, week = nflgame.live.current_year_and_week()
+    conn = fantasy.league.Conn()
+
+    for lgconf in fantasy.leagues().itervalues():
+        if lgconf.kind == 'yahoo':
+            load_yahoo_rosters(conn, lgconf, week)
+            load_yahoo_matchups(conn, lgconf, week)
+        elif lgconf.kind == 'espn':
+            load_espn_rosters(conn, lgconf, week)
+            load_espn_matchups(conn, lgconf, week)
+        else:
+            assert False, 'Unknown league key kind %s' % lgconf.kind
 
