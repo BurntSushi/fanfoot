@@ -29,3 +29,40 @@ def leagues(config_path=None):
                                  key=config.get(label, 'key'))
     return league_info
 
+def table(lst):
+    """
+    Takes a list of iterables and returns them as a nicely formatted table.
+
+    All values must be convertible to a str, or else a ValueError will
+    be raised.
+
+    N.B. I thought Python's standard library had a module that did this
+    (or maybe it was Go's standard library), but I'm on an airplane and
+    pydoc sucks.
+    """
+    maxcols = []
+    output = []
+    first_row = True
+    for row in lst:
+        output_row = []
+        for i, cell in enumerate(row):
+            cell = str(cell)
+            if first_row:
+                maxcols.append(len(cell))
+            else:
+                maxcols[i] = max([maxcols[i], len(cell)])
+            output_row.append(cell)
+
+        output.append(output_row)
+        first_row = False
+
+    nice = []
+    for row in output:
+        nice_row = []
+        for i, cell in enumerate(row):
+            nice_row.append(cell.ljust(maxcols[i] + 2))
+        nice.append(''.join(nice_row))
+
+    return '\n'.join(nice)
+            
+

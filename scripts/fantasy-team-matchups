@@ -1,0 +1,47 @@
+#!/usr/bin/env python2
+
+import argparse
+import sys
+
+import fantasy
+
+parser = argparse.ArgumentParser(
+    description='View your fantasy league matchups for the season '
+                'for a single team.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+aa = parser.add_argument
+aa('league_label', type=str,
+   help='The label of the league. This should correspond to categories in '
+        'your config.ini file.')
+aa('team', type=str, help='The name of the team or the team id.')
+conf = parser.parse_args()
+
+lgconf = fantasy.find(conf.league_label)
+db = fantasy.db()
+
+team = db.find_team(lgconf, conf.team)
+if not team:
+    print >> sys.stderr, 'Could not find team "%s" in league %s.' \
+                         % (conf.team, lgconf.label)
+    sys.exit(1)
+if len(team) > 1:
+    hits = [str(t.name) for t in team]
+    print >> sys.stderr, 'Found too many hits for team "%s" in league %s: %s' \
+                         % (conf.team, lgconf.label, hits)
+    sys.exit(1)
+team = team[0]
+
+matchups = db.all_team_matchups(lgconf, team.id)
+if not matchups:
+    print 'No matchups for team %s in league %s.' % (team.name, lgconf.label)
+    sys.exit(1)
+
+
+table = []
+for matchup in matchups:
+    if matchup.team1.id == team.id:
+        table.append((matchup.team1.name, 'vs.', matchup.team2.name))
+    else:
+        table.append((matchup.team2.name, 'vs.', matchup.team1.name))
+print fantasy.table(table)
+

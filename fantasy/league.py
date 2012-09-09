@@ -6,6 +6,7 @@ import sqlite3
 import nflgame
 
 import fantasy
+import fantasy.player
 
 _sort_positions = {
     'QB': 1,
@@ -18,7 +19,6 @@ _sort_positions = {
     'BN': 8,
 }
 
-Player = namedtuple('Player', ['player', 'pos', 'team', 'name'])
 Team = namedtuple('Team', ['id', 'name'])
 Matchup = namedtuple('Matchup', ['team1', 'team2'])
 
@@ -48,6 +48,40 @@ class Conn (object):
             teams.append(t)
         return sorted(teams, key=lambda t: t.id)
 
+    def teams_by_id(self, lgconf):
+        d = {}
+        for team in self.teams(lgconf):
+            d[team.id] = team
+        return d
+    
+    def find_team(self, lgconf, team):
+        """
+        If team is an integer, then the team information matching the team
+        with that identifier is returned. Otherwise, it is read as a string
+        and is used to search team names.
+        """
+        try:
+            team = int(team)
+            try:
+                return [self.teams_by_id(lgconf)[team]]
+            except KeyError:
+                return []
+        except ValueError:
+            return self.__find_team_by_name(lgconf, team)
+
+    def __find_team_by_name(self, lgconf, team_name):
+        """
+        Searches the list of teams for a name with a case insensitive prefix
+        of team_name. If there are multiple hits, they are all returned.
+
+        This is a helper method for find_team, which is more robust.
+        """
+        hits = []
+        for team in self.teams(lgconf):
+            if team.name.lower().startswith(team_name.lower()):
+                hits.append(team)
+        return hits
+
     def matchups(self, lgconf, week):
         """
         Returns a list of Matchup namedtuples for a week of a league.
@@ -56,6 +90,23 @@ class Conn (object):
             SELECT * FROM matchup
             WHERE league_key = ? AND season = ? AND week = ?
         ''', (lgconf.key, lgconf.season, week))
+        matchups = []
+        for row in cursor:
+            m = Matchup(
+                team1=Team(id=row['team1_id'], name=row['team1_name']),
+                team2=Team(id=row['team2_id'], name=row['team2_name']))
+            matchups.append(m)
+        return matchups
+
+    def all_team_matchups(self, lgconf, team_id):
+        """
+        Returns a list of Matchup namedtuples corresponding to all matchups
+        for a specified team.
+        """
+        cursor = self.__conn.execute('''
+            SELECT * FROM matchup
+            WHERE league_key = ? AND season = ? AND ? IN (team1_id, team2_id)
+        ''', (lgconf.key, lgconf.season, team_id))
         matchups = []
         for row in cursor:
             m = Matchup(
@@ -78,19 +129,20 @@ class Conn (object):
             if not bench and row['player_pos'] == 'BN':
                 continue
 
-            pid = row['player_gsisid']
-            if pid == '0' or pid not in nflgame.players:
-                player_info = None
-            else:
-                player_info = nflgame.players[pid]
-
-            p = Player(
-                player=player_info,
+            p = fantasy.player.Player(
+                lgconf=lgconf,
+                week=row['week'],
+                gsis_id=row['player_gsisid'],
                 pos=row['player_pos'],
                 team=row['player_team'],
                 name=row['player_name'])
             players.append(p)
-        return sorted(players, key=lambda p: _sort_positions[p.pos])
+
+        def sortby_pos(p):
+            pos1 = _sort_positions[p.pos]
+            pos2 = _sort_positions[p.player.position]
+            return (pos1, pos2, p.name)
+        return sorted(players, key=sortby_pos)
 
     def add_roster(self, lgconf, team_id, team_name,
                    week, player_gsisid, player_name, player_team, player_pos):

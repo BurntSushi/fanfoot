@@ -1,0 +1,53 @@
+#!/usr/bin/env python2
+
+import argparse
+import sys
+
+import fantasy
+import fantasy.player
+
+parser = argparse.ArgumentParser(
+    description='View your fantasy league team roster for a particular week.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+aa = parser.add_argument
+aa('league_label', type=str,
+   help='The label of the league. This should correspond to categories in '
+        'your config.ini file.')
+aa('week', type=int, help='The week of the roster to view.')
+aa('team', type=str, help='The name of the team or the team id.')
+aa('--bench', action='store_true',
+   help='When set, bench players will be shown.')
+conf = parser.parse_args()
+
+lgconf = fantasy.find(conf.league_label)
+db = fantasy.db()
+
+team = db.find_team(lgconf, conf.team)
+if not team:
+    print >> sys.stderr, 'Could not find team "%s" in league %s.' \
+                         % (conf.team, lgconf.label)
+    sys.exit(1)
+if len(team) > 1:
+    hits = [str(t.name) for t in team]
+    print >> sys.stderr, 'Found too many hits for team "%s" in league %s: %s' \
+                         % (conf.team, lgconf.label, hits)
+    sys.exit(1)
+team = team[0]
+
+players = db.roster(lgconf, conf.week, team.id, bench=conf.bench)
+if not players:
+    print >> sys.stderr, 'Could not find any players for team %s in ' \
+                         'league %s.' % (team.name, lgconf.label)
+
+table = []
+groups = fantasy.player.group(players)
+headers = fantasy.player.highlight_headers()
+for group, header in zip(groups, headers):
+    table.append(header)
+    for player in group:
+        row = [player.pos, player.team, player.name]
+        row += player.highlights()
+        table.append(row)
+    table.append('')
+print fantasy.table(table)
+

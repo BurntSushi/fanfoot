@@ -1,0 +1,31 @@
+#!/usr/bin/env python2
+
+import argparse
+import sys
+
+import fantasy
+
+parser = argparse.ArgumentParser(
+    description='View your fantasy league matchups for a particular week.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+aa = parser.add_argument
+aa('league_label', type=str,
+   help='The label of the league. This should correspond to categories in '
+        'your config.ini file.')
+aa('week', type=int, help='The week number.')
+conf = parser.parse_args()
+
+lgconf = fantasy.find(conf.league_label)
+db = fantasy.db()
+
+teams = db.teams_by_id(lgconf)
+matchups = db.matchups(lgconf, conf.week)
+if not matchups:
+    print 'No matchups for week %d in league %s.' % (conf.week, lgconf.label)
+    sys.exit(1)
+
+table = []
+for matchup in db.matchups(lgconf, conf.week):
+    table.append((matchup.team1.name, 'vs.', matchup.team2.name))
+print fantasy.table(table)
+
