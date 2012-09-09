@@ -107,7 +107,7 @@ class Player (object):
     def field_goals(self):
         g = self.game()
         if g is None:
-            return None
+            return []
         plays = g.drives.plays().filter(kicking_fga__gt=0)
         fgs = []
         for play in plays:
@@ -145,7 +145,11 @@ class Player (object):
 
     def __kicker_highlights(self):
         stats = self.game_stats()
-        fg0, fg20, fg30, fg40, fg50 = group_field_goals(self.field_goals())
+        fgs = self.field_goals()
+        if not fgs:
+            return [''] * 9
+
+        fg0, fg20, fg30, fg40, fg50 = group_field_goals(fgs)
         return [
             '', '', '',
             '%d/%d' % (stats.kicking_xpmade, stats.kicking_xpa),
