@@ -2,14 +2,32 @@ from collections import namedtuple
 import ConfigParser
 import os.path
 
+import nflgame
+
 import fantasy.league
+import fantasy.scoring
 
 cur_dir = os.path.split(__file__)[0]
 
-LeagueConfig = namedtuple('LeagueConfig', ['label', 'kind', 'season', 'key'])
+_game_cache = {}
+
+LeagueConfig = namedtuple('LeagueConfig',
+                          ['label', 'kind', 'season', 'key', 'scoring'])
 
 def db(fpath=None):
     return fantasy.league.Conn(fpath)
+
+def game(year, week, team):
+    """
+    A convenience function for retrieving game data from nflgame.
+
+    This uses a cache so that JSON game data only needs to be parsed and
+    loaded once.
+    """
+    key = (year, week, team)
+    if key not in _game_cache:
+        _game_cache[key] = nflgame.one(year, week, home=team, away=team)
+    return _game_cache[key]
 
 def find(label):
     return leagues()[label]
@@ -22,11 +40,13 @@ def leagues(config_path=None):
     config.readfp(open(config_path))
     league_info = {}
     for label in config.sections():
+        d = dict([(o, config.get(label, o)) for o in config.options(label)])
         league_info[label] = LeagueConfig(
                                  label=label,
                                  kind=config.get(label, 'kind'),
                                  season=config.get(label, 'season'),
-                                 key=config.get(label, 'key'))
+                                 key=config.get(label, 'key'),
+                                 scoring=fantasy.scoring.create_config(d))
     return league_info
 
 def table(lst):
@@ -61,10 +81,10 @@ def table(lst):
     nice = []
     for i, row in enumerate(output):
         nice_row = []
-        for i, cell in enumerate(row):
-            nice_row.append(cell.ljust(maxcols[i]))
+        for j, cell in enumerate(row):
+            nice_row.append(cell.ljust(maxcols[j]))
         nice.append(''.join(nice_row))
-        if i < len(output) -1:
+        if i < len(output) - 1:
             nice.append(rowsep)
 
     return '\n'.join(nice)

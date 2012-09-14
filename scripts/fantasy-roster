@@ -40,15 +40,36 @@ players = db.roster(lgconf, conf.week, team.id, bench=conf.bench)
 if not players:
     print >> sys.stderr, 'Could not find any players for team %s in ' \
                          'league %s.' % (team.name, lgconf.label)
+    sys.exit(1)
 
 table = []
 groups = fantasy.player.group(players)
 headers = fantasy.player.highlight_headers()
+total = 0.0
 for i, (group, header) in enumerate(zip(groups, headers)):
-    table.append(header)
+    table.append(header + ['Score'])
     for player in group:
-        table.append(player.highlights(get_stats=conf.nostats))
-    if i < len(groups) - 1:
-        table.append('')
+        row = player.highlights(get_stats=conf.nostats)
+        if conf.nostats:
+            s = player.score()
+            if s is not None:
+                row += ['%0.2f' % s]
+                if player.pos != 'BN':
+                    total += s
+            else:
+                row += ['-']
+        else:
+            row += ['-']
+        table.append(row)
+    table.append('')
+
+total_row = [''] * max([len(row) for row in table])
+total_row[-2] = 'TOTAL:'
+if total == 0.0:
+    total_row[-1] = '-'
+else:
+    total_row[-1] = '%0.2f' % total
+table.append(total_row)
+
 print fantasy.table(table)
 

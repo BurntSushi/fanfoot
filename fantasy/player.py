@@ -1,6 +1,7 @@
-import nflgame
 import nflgame.player
 import nflgame.seq
+
+import fantasy
 
 _HEADERS = {
     'offense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
@@ -11,11 +12,11 @@ _HEADERS = {
                 ('rushing_att', 'Rh Att'),
                 ('rushing_yds', 'Rh Yds'),
                 ('rushing_tds', 'Rh TDs'),
-                ('receiving_rec', 'Rec Rec'),
-                ('receiving_yds', 'Rec Yds'),
-                ('receiving_tds', 'Rec TDs'),
+                ('receiving_rec', 'Rc Rec'),
+                ('receiving_yds', 'Rc Yds'),
+                ('receiving_tds', 'Rc TDs'),
                 ('twoptm', '2-ptc'),
-                ('fumlost', 'F. Lost'),
+                ('fumlost', 'F.Lst'),
                ],
     'kicking': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
                 ('', ''), ('', ''), ('', ''), ('', ''), ('', ''), ('', ''),
@@ -120,7 +121,7 @@ def _create_statrow(cat, d):
     """
     lst = []
     for field, _ in _HEADERS[cat]:
-        lst.append(d.get(field, 0))
+        lst.append(d.get(field, '-'))
     return lst
 
 def create_player(lgconf, week, gsis_id, pos, team, name):
@@ -161,12 +162,11 @@ class Player (object):
             newd[k] = v
         return newd
 
+    def score(self):
+        return fantasy.scoring.score(self)
+
     def game(self):
-        return nflgame.one(
-            year=int(self.lgconf.season),
-            week=self.week,
-            home=self.team,
-            away=self.team)
+        return fantasy.game(int(self.lgconf.season), self.week, self.team)
 
     def game_stats(self):
         g = self.game()
@@ -200,7 +200,7 @@ class OffensePlayer (Player):
             'receiving_yds': stats.receiving_yds,
             'receiving_tds': stats.receiving_tds,
             'twoptm': stats.twoptm,
-            'fum_lost': stats.fumbles_lost,
+            'fumlost': stats.fumbles_lost,
         }))
 
 class KickingPlayer (Player):
@@ -284,10 +284,19 @@ class DefensePlayer (Player):
 
     @property
     def blocks(self):
-        xpblks = self._count_stat('defense_xpblk')
-        fgblks = self._count_stat('defense_fgblk')
-        puntblks = self._count_stat('defense_puntblk')
-        return xpblks + fgblks + puntblks
+        return self.xpblks + self.fgblks + self.puntblks
+
+    @property
+    def xpblks(self):
+        return self._count_stat('defense_xpblk')
+
+    @property
+    def fgblks(self):
+        return self._count_stat('defense_fgblk')
+
+    @property
+    def puntblks(self):
+        return self._count_stat('defense_puntblk')
 
     @property
     def krtds(self):
