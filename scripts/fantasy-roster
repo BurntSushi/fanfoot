@@ -10,13 +10,15 @@ parser = argparse.ArgumentParser(
     description='View your fantasy league team roster for a particular week.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 aa = parser.add_argument
+aa('week', type=int, help='The week of the roster to view.')
+aa('team', type=str, help='The name of the team or the team id.')
 aa('league_label', type=str,
    help='The label of the league. This should correspond to categories in '
         'your config.ini file.')
-aa('week', type=int, help='The week of the roster to view.')
-aa('team', type=str, help='The name of the team or the team id.')
 aa('--bench', action='store_true',
    help='When set, bench players will be shown.')
+aa('--nostats', action='store_false',
+   help='When set, stats will not be fetched and will be set to 0.')
 conf = parser.parse_args()
 
 lgconf = fantasy.find(conf.league_label)
@@ -45,9 +47,7 @@ headers = fantasy.player.highlight_headers()
 for group, header in zip(groups, headers):
     table.append(header)
     for player in group:
-        row = [player.pos, player.team, player.name]
-        row += player.highlights()
-        table.append(row)
+        table.append(player.highlights(get_stats=conf.nostats))
     table.append('')
 print fantasy.table(table)
 

@@ -22,9 +22,10 @@ aa('league_teams', type=str, nargs='+',
         '"espn:Langdon Algers", "espn:2", "keeper:Langdon Algers", etc.')
 conf = parser.parse_args()
 
-_, cur_week = nflgame.live.current_year_and_week()
 
 db = fantasy.db()
+cur_week = db.get_week()
+
 tracking = []
 for league_team in conf.league_teams:
     try:
@@ -90,4 +91,3 @@ def cb(active, completed):
     print '-' * 45
 
 nflgame.live.run(cb)
-

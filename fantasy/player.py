@@ -11,6 +11,8 @@ def group(players):
             kickers.append(p)
         elif p.player.position == 'DEF':
             defense.append(p)
+        elif p.player.position == 'IR':
+            continue  # Ignore injured reserve players for now.
         else:
             offense.append(p)
     return (offense, kickers, defense)
@@ -55,24 +57,70 @@ def group_field_goals(fgs):
             (fgs40_49m, fgs40_49a),
             (fgs50m, fgs50a))
 
+_HEADERS = {
+    'offense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
+                ('passing_cmp', 'Pass Cmp'),
+                ('passing_yds', 'Pass Yds'),
+                ('passing_tds', 'Pass TDs'),
+                ('passing_int', 'Pass Int'),
+                ('rushing_att', 'Rush Att'),
+                ('rushing_yds', 'Rush Yds'),
+                ('rushing_tds', 'Rush TDs'),
+                ('receiving_rec', 'Recv Rec'),
+                ('receiving_yds', 'Recv Yds'),
+                ('receiving_tds', 'Recv TDs'),
+                ('twoptm', '2-pt Conv'),
+                ('fumlost', 'Fum Lost'),
+               ],
+    'kicking': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
+                ('', ''), ('', ''), ('', ''), ('', ''), ('', ''), ('', ''),
+                ('xp', 'XP'),
+                ('fg0_19', 'FG 0-19'),
+                ('fg20_29', 'FG 20-29'),
+                ('fg30_39', 'FG 30-39'),
+                ('fg40_49', 'FG 40-49'),
+                ('fg50', 'FG 50+'),
+               ],
+    'defense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+               ],
+}
+
 def highlight_headers():
     """
-    Returns a triple of offensive, kicker and defense headers. All three
+    Returns a triple of offensive, kicking and defense headers. All three
     lists are guaranteed to be the same length.
     """
-    offense =  ['Pos', 'Team', 'Name',
-                'Pass Cmp', 'Pass Yds', 'Pass TDs',
-                'Rush Att', 'Rush Yds', 'Rush TDs',
-                'Recv Rec', 'Recv Yds', 'Recv TDs',
-               ]
-    kickers = ['Pos', 'Team', 'Name',
-               '', '', '',
-               'XP', 'FG 0-19', 'FG 20-29', 'FG 30-39', 'FG 40-49', 'FG 50+',
-              ]
-    defense = ['Pos', 'Team', 'Name',
-               '', '', '', '', '', '', '', '', '',
-              ]
-    return (offense, kickers, defense)
+    offense =  [h[1] for h in _HEADERS['offense']]
+    kicking = [h[1] for h in _HEADERS['kicking']]
+    defense = [h[1] for h in _HEADERS['defense']]
+    return (offense, kicking, defense)
+
+
+def _create_statrow(cat, d):
+    """
+    Takes a dict d keyed by statistical fields in _HEADERS with values
+    corresponding to the actual stats in the statistical category named
+    by cat.
+
+    A list is returned of the appropriate length with each cell filled
+    with the correct value according to _HEADERS.
+    """
+    lst = []
+    for field, _ in _HEADERS[cat]:
+        lst.append(d.get(field, 0))
+    return lst
 
 class Player (object):
     def __init__(self, lgconf, week, gsis_id, pos, team, name): 
@@ -86,12 +134,21 @@ class Player (object):
         self.team = team
         self.name = name
 
+        self._base_info = {
+            'pos': self.pos,
+            'team': self.team,
+            'name': self.name,
+        }
+
+    def _add_base_info(self, d):
+        newd = {}
+        for k, v in self._base_info.iteritems():
+            newd[k] = v
+        for k, v in d.iteritems():
+            newd[k] = v
+        return newd
+
     def game(self):
-        # return nflgame.one( 
-            # year=2011, 
-            # week=14, 
-            # home=self.team, 
-            # away=self.team) 
         return nflgame.one(
             year=int(self.lgconf.season),
             week=self.week,
@@ -102,7 +159,7 @@ class Player (object):
         g = self.game()
         if g is None:
             return None
-        return g.drives.players().playerid(self.player.playerid)
+        return g.max_player_stats().playerid(self.player.playerid)
 
     def field_goals(self):
         g = self.game()
@@ -120,46 +177,57 @@ class Player (object):
                 fgs.append((stats.kicking_fgmissed_yds, False))
         return fgs
 
-    def highlights(self):
+    def highlights(self, get_stats=True):
         if self.player.position == 'K':
-            return self.__kicker_highlights()
+            return self.__kicking_highlights(get_stats)
         elif self.player.position == 'DEF':
-            return self.__defense_highlights()
-        return self.__offense_highlights()
+            return self.__defense_highlights(get_stats)
+        return self.__offense_highlights(get_stats)
 
-    def __offense_highlights(self):
+    def __offense_highlights(self, get_stats=True):
+        base = _create_statrow('offense', self._base_info)
+        if not get_stats:
+            return base
+
         stats = self.game_stats()
         if stats is None:
-            return []
-        return [
-            stats.passing_cmp,
-            stats.passing_yds,
-            stats.passing_tds,
-            stats.rushing_att,
-            stats.rushing_yds,
-            stats.rushing_tds,
-            stats.receiving_rec,
-            stats.receiving_yds,
-            stats.receiving_tds,
-        ]
+            return base
 
-    def __kicker_highlights(self):
+        return _create_statrow('offense', self._add_base_info({
+            'passing_cmp': stats.passing_cmp,
+            'passing_yds': stats.passing_yds,
+            'passing_tds': stats.passing_tds,
+            'passing_int': stats.passing_int,
+            'rushing_att': stats.rushing_att,
+            'rushing_yds': stats.rushing_yds,
+            'rushing_tds': stats.rushing_tds,
+            'receiving_rec': stats.receiving_rec,
+            'receiving_yds': stats.receiving_yds,
+            'receiving_tds': stats.receiving_tds,
+            'twoptm': stats.twoptm,
+            'fum_lost': stats.fumbles_lost,
+        }))
+
+    def __kicking_highlights(self, get_stats=True):
+        base = _create_statrow('kicking', self._base_info)
+        if not get_stats:
+            return base
+
         stats = self.game_stats()
         fgs = self.field_goals()
         if not fgs:
-            return [''] * 9
+            return base
 
         fg0, fg20, fg30, fg40, fg50 = group_field_goals(fgs)
-        return [
-            '', '', '',
-            '%d/%d' % (stats.kicking_xpmade, stats.kicking_xpa),
-            '%d/%d' % (fg0[0], fg0[1]),
-            '%d/%d' % (fg20[0], fg20[1]),
-            '%d/%d' % (fg30[0], fg30[1]),
-            '%d/%d' % (fg40[0], fg40[1]),
-            '%d/%d' % (fg50[0], fg50[1]),
-        ]
+        return _create_statrow('kicking', self._add_base_info({
+            'xp': '%d/%d' % (stats.kicking_xpmade, stats.kicking_xpa),
+            'fg0_19': '%d/%d' % (fg0[0], fg0[1]),
+            'fg20_29': '%d/%d' % (fg20[0], fg20[1]),
+            'fg30_39': '%d/%d' % (fg30[0], fg30[1]),
+            'fg40_49': '%d/%d' % (fg40[0], fg40[1]),
+            'fg50': '%d/%d' % (fg50[0], fg50[1]),
+        }))
 
-    def __defense_highlights(self):
-        return []
+    def __defense_highlights(self, get_stats=True):
+        return _create_statrow('defense', self._base_info)
 

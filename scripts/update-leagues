@@ -1,6 +1,8 @@
 #!/usr/bin/env python2
 
+import argparse
 import re
+import sys
 import urllib2
 
 from bs4 import BeautifulSoup
@@ -10,6 +12,16 @@ import nflgame.live
 import fantasy
 import fantasy.ffyql
 import fantasy.league
+
+parser = argparse.ArgumentParser(
+    description='Update the league information (rosters and matchups) for a '
+                'particular week.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+aa = parser.add_argument
+aa('--all', action='store_true',
+   help='When set, load all weeks up to and including the current week. '
+        'Otherwise, only update the current week.')
+conf = parser.parse_args()
 
 espn_roster_url = 'http://games.espn.go.com/ffl/' \
                   'leaguerosters?leagueId=%s&weekId=%d'
@@ -24,6 +36,7 @@ positions = [
     ['DEF', 'D/ST'],
     ['BN', 'BEN', 'Bench'],
     ['FLEX', 'W/R/T', 'W/R', 'RB/WR'],
+    ['IR'],
 ]
 
 yahoo_aliases = {
@@ -96,10 +109,13 @@ def load_espn_rosters(conn, lgconf, week):
     plinks = soup.find_all('a', tab="null",
                            seasonid=lgconf.season, leagueid=lgconf.key)
     for plink in plinks:
-        name = plink.get_text().replace('D/ST', '').strip()
-        team_pos = plink.next_sibling.strip(' \r\n,*').strip()
-        play_pos = plink.find_parent('tr').find('td').get_text().strip()
+        name = nouni(plink.get_text()).replace('D/ST', '').strip()
+        play_pos = nouni(plink.find_parent('tr').find('td').get_text()).strip()
         play_pos = standard_position(play_pos)
+
+        team_pos = nouni(unicode(plink.next_sibling)).strip(' \r\n,*').strip()
+        if ',' in team_pos:  # screw multi-position players
+            team_pos = team_pos[:team_pos.index(',')]
 
         if team_pos.lower() == 'd/st':
             playerid = "0"
@@ -143,7 +159,7 @@ def load_espn_matchups(conn, lgconf, week):
 
         this_week = team1.find_parent('tr')
         this_week = this_week.find_previous_sibling('tr', 'tableHead')
-        this_week = this_week.get_text().strip()
+        this_week = nouni(this_week.get_text()).strip()
         this_week = int(this_week.replace('WEEK', '').strip())
 
         conn.add_matchup(
@@ -164,8 +180,7 @@ def get_espn_team_map(soup):
     return teams
 
 def espn_soup(url):
-    html = unicode_spaces(urllib2.urlopen(url).read())
-    return BeautifulSoup(html)
+    return BeautifulSoup(nouni(urllib2.urlopen(url).read()))
 
 def standard_player_name(name):
     for bad, good in yahoo_aliases.iteritems():
@@ -181,7 +196,7 @@ def standard_position(pos):
                 return variants[0]
     assert False, 'Could not find standard position for %s' % pos
 
-def unicode_spaces(text):
+def nouni(text):
     text = list(text)
     for i, o in enumerate(map(ord, text)):
         if o > 127:
@@ -189,16 +204,21 @@ def unicode_spaces(text):
     return ''.join(text)
 
 if __name__ == '__main__':
-    year, week = nflgame.live.current_year_and_week()
     conn = fantasy.league.Conn()
+    cur_week = conn.get_week()
+    if conf.all:
+        rng = xrange(1, cur_week + 1)
+    else:
+        rng = xrange(cur_week, cur_week + 1)
 
-    for lgconf in fantasy.leagues().itervalues():
-        if lgconf.kind == 'yahoo':
-            load_yahoo_rosters(conn, lgconf, week)
-            load_yahoo_matchups(conn, lgconf, week)
-        elif lgconf.kind == 'espn':
-            load_espn_rosters(conn, lgconf, week)
-            load_espn_matchups(conn, lgconf, week)
-        else:
-            assert False, 'Unknown league key kind %s' % lgconf.kind
+    for week in rng:
+        for lgconf in fantasy.leagues().itervalues():
+            if lgconf.kind == 'yahoo':
+                load_yahoo_rosters(conn, lgconf, week)
+                load_yahoo_matchups(conn, lgconf, week)
+            elif lgconf.kind == 'espn':
+                load_espn_rosters(conn, lgconf, week)
+                load_espn_matchups(conn, lgconf, week)
+            else:
+                assert False, 'Unknown league key kind %s' % lgconf.kind
 

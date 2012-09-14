@@ -3,8 +3,6 @@ import os
 import os.path
 import sqlite3
 
-import nflgame
-
 import fantasy
 import fantasy.player
 
@@ -180,6 +178,34 @@ class Conn (object):
             WHERE league_key = ? AND season = ? AND week = ?
         ''', (lgconf.key, lgconf.season, week))
 
+    def get_week(self):
+        """
+        Returns the current week from the database.
+        """
+        cursor = self.__conn.execute('SELECT week FROM status LIMIT 1')
+        for row in cursor:
+            return row['week']
+        assert False, 'Could not find week in database.'
+
+    def update_status(self, kind, season, week):
+        """
+        Updates the current status of the NFL season. kind is a string of
+        either PRE, REG or POST. season is a string of the current year
+        of the season. week is an integer indicating the week, where the
+        number '1' indicates the first round of games in a phase of the
+        season (i.e., the first preseason game is in week 1, the first
+        regular season game is in week 1, and the wild card round of the
+        postseason is in week 1.)
+        """
+        self.__conn.execute('DELETE FROM status')
+        self.__conn.execute('''
+            INSERT INTO status
+            (kind, season, week)
+            VALUES
+            (?, ?, ?)
+        ''', (kind, season, week))
+        self.commit()
+
     def commit(self):
         self.__conn.commit()
 
@@ -207,6 +233,13 @@ def _new_db(fpath):
             team1_name TEXT,
             team2_id INTEGER,
             team2_name TEXT
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE status (
+            kind TEXT,
+            season TEXT,
+            week INTEGER
         )
     ''')
     conn.commit()
