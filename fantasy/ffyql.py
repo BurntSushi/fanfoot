@@ -1,3 +1,4 @@
+import ConfigParser
 import json
 import os
 import os.path
@@ -7,19 +8,25 @@ import yql.storage
 
 import fantasy
 
-_json_secrets = os.path.join(fantasy.cur_dir, 'yql.json')
-_cache_dir = os.path.join(fantasy.cur_dir, '.cache')
-_secrets = json.loads(open(_json_secrets).read())
+yqlconn = None
 
-_key = _secrets['key']
-_secret = _secrets['secret']
-_store_key = _secrets['store_key']
+token_store = None
 
-if not os.access(_cache_dir, os.R_OK):
-    os.mkdir(_cache_dir)
-token_store = yql.storage.FileTokenStore(_cache_dir, secret=_store_key)
+def connect():
+    global yqlconn, token_store
 
-y = yql.ThreeLegged(_key, _secret)
+    _cache_dir = os.path.join(fantasy.cur_dir, '.cache')
+    _config = get_yql_config()
+
+    _key = _config['key']
+    _secret = _config['secret']
+    _store_key = _config['store_key']
+
+    if not os.access(_cache_dir, os.R_OK):
+        os.mkdir(_cache_dir)
+    token_store = yql.storage.FileTokenStore(_cache_dir, secret=_store_key)
+
+    yqlconn = yql.ThreeLegged(_key, _secret)
 
 def get_stored_token():
     return token_store.get('mine')
@@ -27,13 +34,13 @@ def get_stored_token():
 def get_token():
     stored = get_stored_token()
     if not stored:
-        req_token, auth_url = y.get_token_and_auth_url()
+        req_token, auth_url = yqlconn.get_token_and_auth_url()
         print 'Go to: %s' % auth_url
         verifier = raw_input('Verifier: ')
-        token = y.get_access_token(req_token, verifier)
+        token = yqlconn.get_access_token(req_token, verifier)
         token_store.set('mine', token)
     else:
-        token = y.check_token(stored)
+        token = yqlconn.check_token(stored)
         if token != stored:
             print 'Refreshing YAHOO token!'
             token_store.set('mine', token)
@@ -41,5 +48,17 @@ def get_token():
     return token
 
 def yqlquery(sql):
-    return y.execute(sql, token=get_token())
+    return yqlconn.execute(sql, token=get_token())
+
+def get_yql_config(config_path=None):
+    if config_path is None:
+        config_path = os.path.join(fantasy.cur_dir, 'yql.ini')
+
+    config = ConfigParser.RawConfigParser()
+    config.readfp(open(config_path))
+    return {
+        'secret': config.get('yql', 'secret'),
+        'key': config.get('yql', 'key'),
+        'storage_key': config.get('yql', 'storage_key'),
+    }
 

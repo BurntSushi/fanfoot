@@ -2,7 +2,6 @@
 
 import argparse
 import re
-import sys
 import urllib2
 
 from bs4 import BeautifulSoup
@@ -204,6 +203,7 @@ def nouni(text):
     return ''.join(text)
 
 if __name__ == '__main__':
+    fantasy.ffyql.connect()
     conn = fantasy.league.Conn()
     cur_week = conn.get_week()
     if conf.all:
