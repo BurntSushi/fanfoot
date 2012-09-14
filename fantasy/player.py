@@ -1,5 +1,46 @@
 import nflgame
 import nflgame.player
+import nflgame.seq
+
+_HEADERS = {
+    'offense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
+                ('passing_cmp', 'Ps Cmp'),
+                ('passing_yds', 'Ps Yds'),
+                ('passing_tds', 'Ps TDs'),
+                ('passing_int', 'Ps Int'),
+                ('rushing_att', 'Rh Att'),
+                ('rushing_yds', 'Rh Yds'),
+                ('rushing_tds', 'Rh TDs'),
+                ('receiving_rec', 'Rec Rec'),
+                ('receiving_yds', 'Rec Yds'),
+                ('receiving_tds', 'Rec TDs'),
+                ('twoptm', '2-ptc'),
+                ('fumlost', 'F. Lost'),
+               ],
+    'kicking': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
+                ('', ''), ('', ''), ('', ''), ('', ''), ('', ''), ('', ''),
+                ('xp', 'XP'),
+                ('fg0_19', 'FG 0-19'),
+                ('fg20_29', 'FG 20-29'),
+                ('fg30_39', 'FG 30-39'),
+                ('fg40_49', 'FG 40-49'),
+                ('fg50', 'FG 50+'),
+               ],
+    'defense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
+                ('', ''),
+                ('', ''),
+                ('', ''),
+                ('tds', 'TDs'),
+                ('int', 'INT'),
+                ('fumrec', 'Fum Rec'),
+                ('sack', 'Sack'),
+                ('safety', 'Safe'),
+                ('pa', 'PA'),
+                ('ktd', 'KTD'),
+                ('prtd', 'PRTD'),
+                ('blk', 'BLK'),
+               ],
+}
 
 def group(players):
     """
@@ -57,46 +98,6 @@ def group_field_goals(fgs):
             (fgs40_49m, fgs40_49a),
             (fgs50m, fgs50a))
 
-_HEADERS = {
-    'offense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
-                ('passing_cmp', 'Pass Cmp'),
-                ('passing_yds', 'Pass Yds'),
-                ('passing_tds', 'Pass TDs'),
-                ('passing_int', 'Pass Int'),
-                ('rushing_att', 'Rush Att'),
-                ('rushing_yds', 'Rush Yds'),
-                ('rushing_tds', 'Rush TDs'),
-                ('receiving_rec', 'Recv Rec'),
-                ('receiving_yds', 'Recv Yds'),
-                ('receiving_tds', 'Recv TDs'),
-                ('twoptm', '2-pt Conv'),
-                ('fumlost', 'Fum Lost'),
-               ],
-    'kicking': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
-                ('', ''), ('', ''), ('', ''), ('', ''), ('', ''), ('', ''),
-                ('xp', 'XP'),
-                ('fg0_19', 'FG 0-19'),
-                ('fg20_29', 'FG 20-29'),
-                ('fg30_39', 'FG 30-39'),
-                ('fg40_49', 'FG 40-49'),
-                ('fg50', 'FG 50+'),
-               ],
-    'defense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-                ('', ''),
-               ],
-}
-
 def highlight_headers():
     """
     Returns a triple of offensive, kicking and defense headers. All three
@@ -122,17 +123,29 @@ def _create_statrow(cat, d):
         lst.append(d.get(field, 0))
     return lst
 
+def create_player(lgconf, week, gsis_id, pos, team, name):
+    if name == team:  # Defense!
+        playermeta = nflgame.player.PlayerDefense(team)
+    else:
+        playermeta = nflgame.players[gsis_id]
+
+    if playermeta.position == 'K':
+        init = KickingPlayer
+    elif playermeta.position == 'DEF':
+        init = DefensePlayer
+    else:
+        init = OffensePlayer
+
+    return init(lgconf, week, gsis_id, pos, team, name, playermeta)
+
 class Player (object):
-    def __init__(self, lgconf, week, gsis_id, pos, team, name): 
-        if name == team:  # Defense!
-            self.player = nflgame.player.PlayerDefense(team)
-        else:
-            self.player = nflgame.players[gsis_id]
+    def __init__(self, lgconf, week, gsis_id, pos, team, name, playermeta): 
         self.lgconf = lgconf
         self.week = week
         self.pos = pos
         self.team = team
         self.name = name
+        self.player = playermeta
 
         self._base_info = {
             'pos': self.pos,
@@ -161,6 +174,36 @@ class Player (object):
             return None
         return g.max_player_stats().playerid(self.player.playerid)
 
+    def highlights(self, get_stats=True):
+        assert False, 'subclass responsibility'
+
+class OffensePlayer (Player):
+    def highlights(self, get_stats=True):
+        base = _create_statrow('offense', self._base_info)
+        if not get_stats:
+            return base
+
+        stats = self.game_stats()
+        if stats is None:
+            return base
+
+        return _create_statrow('offense', self._add_base_info({
+            'passing_cmp': '%d/%d' % (stats.passing_cmp, stats.passing_att),
+            'passing_yds': stats.passing_yds,
+            'passing_tds': stats.passing_tds,
+            'passing_int': stats.passing_int,
+            'rushing_att': stats.rushing_att,
+            'rushing_yds': stats.rushing_yds,
+            'rushing_tds': stats.rushing_tds,
+            'receiving_rec': '%d/%d' % (stats.receiving_rec,
+                                        stats.receiving_tar),
+            'receiving_yds': stats.receiving_yds,
+            'receiving_tds': stats.receiving_tds,
+            'twoptm': stats.twoptm,
+            'fum_lost': stats.fumbles_lost,
+        }))
+
+class KickingPlayer (Player):
     def field_goals(self):
         g = self.game()
         if g is None:
@@ -178,37 +221,6 @@ class Player (object):
         return fgs
 
     def highlights(self, get_stats=True):
-        if self.player.position == 'K':
-            return self.__kicking_highlights(get_stats)
-        elif self.player.position == 'DEF':
-            return self.__defense_highlights(get_stats)
-        return self.__offense_highlights(get_stats)
-
-    def __offense_highlights(self, get_stats=True):
-        base = _create_statrow('offense', self._base_info)
-        if not get_stats:
-            return base
-
-        stats = self.game_stats()
-        if stats is None:
-            return base
-
-        return _create_statrow('offense', self._add_base_info({
-            'passing_cmp': stats.passing_cmp,
-            'passing_yds': stats.passing_yds,
-            'passing_tds': stats.passing_tds,
-            'passing_int': stats.passing_int,
-            'rushing_att': stats.rushing_att,
-            'rushing_yds': stats.rushing_yds,
-            'rushing_tds': stats.rushing_tds,
-            'receiving_rec': stats.receiving_rec,
-            'receiving_yds': stats.receiving_yds,
-            'receiving_tds': stats.receiving_tds,
-            'twoptm': stats.twoptm,
-            'fum_lost': stats.fumbles_lost,
-        }))
-
-    def __kicking_highlights(self, get_stats=True):
         base = _create_statrow('kicking', self._base_info)
         if not get_stats:
             return base
@@ -228,6 +240,123 @@ class Player (object):
             'fg50': '%d/%d' % (fg50[0], fg50[1]),
         }))
 
-    def __defense_highlights(self, get_stats=True):
-        return _create_statrow('defense', self._base_info)
+class DefensePlayer (Player):
+    def highlights(self, get_stats=True):
+        base = _create_statrow('defense', self._base_info)
+        if not get_stats:
+            return base
+
+        stats = self.players()
+        if stats is None:
+            return base
+
+        return _create_statrow('defense', self._add_base_info({
+            'tds': self.tds,
+            'int': self.ints,
+            'fumrec': self.fumrecs,
+            'sack': self.sacks,
+            'safety': self.safeties,
+            'pa': self.points_allowed,
+            'ktd': self.krtds,
+            'prtd': self.prtds,
+            'blk': self.blocks,
+        }))
+
+    @property
+    def tds(self):
+        return self._count_stat('defense_tds')
+
+    @property
+    def ints(self):
+        return self._count_stat('defense_int')
+
+    @property
+    def fumrecs(self):
+        return self._count_stat('defense_frec')
+
+    @property
+    def sacks(self):
+        return self._count_stat('defense_sk')
+
+    @property
+    def safeties(self):
+        return self._count_stat('defense_safe')
+
+    @property
+    def blocks(self):
+        xpblks = self._count_stat('defense_xpblk')
+        fgblks = self._count_stat('defense_fgblk')
+        puntblks = self._count_stat('defense_puntblk')
+        return xpblks + fgblks + puntblks
+
+    @property
+    def krtds(self):
+        return self._count_stat('kickret_tds')
+
+    @property
+    def prtds(self):
+        return self._count_stat('puntret_tds')
+
+    @property
+    def points_allowed(self):
+        game = self.game()
+        if game is None:
+            return 0
+
+        home = game.home == self.name
+        if self.lgconf.kind == 'espn':
+            if game.home == self.name:
+                return game.score_away
+            else:
+                return game.score_home
+        elif self.lgconf.kind == 'yahoo':
+            # This is weird. Yahoo only counts certain points in the
+            # "points allowed" category. Since most points are against the
+            # defense, we compute this in the negative: start with the total
+            # points allowed, and subtract the following forms of scoring:
+            # interception return tds, fumble return tds, blocked field
+            # goal return tds and safeties. We do the subtraction iteratively
+            # over each play in the game.
+            pa = game.score_away if home else game.score_home
+            for play in game.drives.plays():
+                # We're only subtracting points when the defense isn't
+                # on the field.
+                if home != play.home:
+                    continue
+
+                if play.defense_safe > 0:
+                    pa -= 2
+                elif play.defense_int_tds > 0:
+                    pa -= 6
+                elif play.defense_frec_tds > 0:
+                    pa -= 6
+                elif play.defense_misc_tds > 0:
+                    # This can refer to either field goal returns for td
+                    # or punt blocks for tds. Curiously, only the punt block
+                    # returns are counted as points allowed. So if the play
+                    # description contains the phrase 'field goal', subtract
+                    # the td from the points allowed.
+                    if 'field goal' in play.desc.lower():
+                        pa -= 6
+            return pa
+
+        assert False, 'I don\'t know how to compute PA for %s leagues.' \
+                      % self.lgconf.kind
+
+    def players(self):
+        game = self.game()
+        if game is None:
+            return nflgame.seq.GenPlayerStats([])
+
+        home = game.home == self.name
+        return game.max_player_stats().filter(home=home)
+
+    def _count_stat(self, stat):
+        cnt = 0
+        for p in self.players().filter(**{'%s__ge' % stat: 1}):
+            cnt += getattr(p, stat)
+        return cnt
+
+    def game_stats(self):
+        assert False, 'invalid'
 

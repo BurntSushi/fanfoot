@@ -127,7 +127,7 @@ class Conn (object):
             if not bench and row['player_pos'] == 'BN':
                 continue
 
-            p = fantasy.player.Player(
+            p = fantasy.player.create_player(
                 lgconf=lgconf,
                 week=row['week'],
                 gsis_id=row['player_gsisid'],

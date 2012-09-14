@@ -40,6 +40,7 @@ def table(lst):
     (or maybe it was Go's standard library), but I'm on an airplane and
     pydoc sucks.
     """
+    pad = 2
     maxcols = []
     output = []
     first_row = True
@@ -48,20 +49,23 @@ def table(lst):
         for i, cell in enumerate(row):
             cell = str(cell)
             if first_row:
-                maxcols.append(len(cell))
+                maxcols.append(len(cell) + pad)
             else:
-                maxcols[i] = max([maxcols[i], len(cell)])
+                maxcols[i] = max([maxcols[i], len(cell) + pad])
             output_row.append(cell)
 
         output.append(output_row)
         first_row = False
 
+    rowsep = '-' * sum(maxcols)
     nice = []
-    for row in output:
+    for i, row in enumerate(output):
         nice_row = []
         for i, cell in enumerate(row):
-            nice_row.append(cell.ljust(maxcols[i] + 2))
+            nice_row.append(cell.ljust(maxcols[i]))
         nice.append(''.join(nice_row))
+        if i < len(output) -1:
+            nice.append(rowsep)
 
     return '\n'.join(nice)
             

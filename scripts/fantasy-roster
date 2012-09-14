@@ -44,10 +44,11 @@ if not players:
 table = []
 groups = fantasy.player.group(players)
 headers = fantasy.player.highlight_headers()
-for group, header in zip(groups, headers):
+for i, (group, header) in enumerate(zip(groups, headers)):
     table.append(header)
     for player in group:
         table.append(player.highlights(get_stats=conf.nostats))
-    table.append('')
+    if i < len(groups) - 1:
+        table.append('')
 print fantasy.table(table)
 
