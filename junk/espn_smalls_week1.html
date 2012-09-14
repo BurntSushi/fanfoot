@@ -1,0 +1,700 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Algers vs Malia Box Score: Week 1 - Free Fantasy Football -  ESPN</title>
+<!-- N7ESPNAPP260.mgmt.prod:2775 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate, proxy-revalidate, maxage=0">
+<meta http-equiv="Expires" content="-1">
+
+
+		<script type="text/javascript">
+		/* omniture ad tracking v0.1 24Jun08 */
+		var anAds;
+		anAds="";
+		function anPassAds(str) {
+			anAds=anAds?anAds+",ads;"+str+";;;event38=1":"ads;"+str+";;;event38=1";
+		}
+		</script>
+<link rel="stylesheet" href="http://a.espncdn.com/combiner/c?css=fantasy_reset.r1.css,base.r234.css,modules.r422.css,global_header.r38.css,modules/global_nav.r52.css,modules/insider_enhanced.200910131831.css,registration/facebook.button.v2.css,registration/v3_1.facebook.v2.css,modules/browser-alert.r7.css" type="text/css" media="screen" charset="utf-8">
+<link rel="stylesheet" href="http://a.espncdn.com/combiner/c?css=espn.teams.r3.css" type="text/css" media="screen" charset="utf-8">
+<style type="text/css">
+#content{width:990px !important;}
+#header{width:990px !important;}
+#nav-wrapper-container{width:990px !important;}
+#nav-main ul.top li .wrapper{width:984px !important;}
+#content.container { padding: 0; }
+</style>
+<style type="text/css">
+</style>
+
+<link rel="stylesheet" type="text/css" href="http://g.espncdn.com/ffl/static/css/main?v=2488814192711">
+<script type="text/javascript" src="http://g.espncdn.com/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://g.espncdn.com/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://g.espncdn.com/libs/swfobject/2.2/swfobject.js"></script>
+<script type="text/javascript" charset="iso-8859-1" src="http://a.espncdn.com/combiner/c/?js=plugins/json2.r3.js,plugins/teacrypt.js,plugins/jquery.metadata.js,plugins/jquery.bgiframe.r3.js,plugins/jquery.easing.1.3.js,plugins/jquery.hoverIntent.js,plugins/jquery.jcarousel.js,plugins/jquery.tinysort.r4.js,plugins/jquery.pubsub.r5.js,plugins/ba-debug-0.4.js,espn.l10n.r12.js,flashObjWrapper.r7.js,espn.core.duo.r54.js,stub.search.r9.js,espn.nav.mega.r33.js,espn.storage.r6.js,espn.p13n.r15.js,espn.video.r54.js,registration/staticLogin.r10-28.js,registration/espn.overlay.stub.r3-18.js,espn.insider.r5.js,espn.espn360.stub.r9.js,espn.myHeadlines.stub.r13.js,espn.gallery.0628.js"></script>
+<script type="text/javascript" src="http://g.espncdn.com/libs/prototype/1.6.0.2/prototype.js"></script>
+<script type="text/javascript">
+
+com = { espn: {
+	env: {
+		av: navigator.appVersion,
+		ua: navigator.userAgent,
+		an: navigator.appName,
+		platform: navigator.platform,
+		IE: "Microsoft Internet Explorer",
+		NS: "Netscape",
+		MAC: "MacPPC",
+
+		host: "games.espn.go.com",
+		context: "boxscore"
+	},
+	listeners: {},
+	games: {
+		gameRoot: "ffl",
+		leagueId: 1032293,
+		seasonId: 2012,
+		toTeamId: 2,
+		fromTeamId: 2,
+		scoringPeriodId: 1,
+		currentScoringPeriodId: 2,
+		leagueType: 0
+	}
+}};
+
+com.espn.games.isLeagueManager = false;com.espn.games.isLeagueCreator = false;com.espn.games.isLeagueMember = true;com.espn.games.userLoggedIn = true;com.espn.games.username = 'SkoeyMitchell';
+var GAMEROOT = "ffl";var host = "games.espn.go.com";var gameRoot = "ffl";var leagueId = 1032293;var teamId = 2;</script><script type="text/javascript" src="http://g.espncdn.com/ffl/static/js/libraries?v=314524"></script>
+<script type="text/javascript">
+
+
+
+Poll = Class.create();
+Poll.barImagePath = 'http://g.espncdn.com/s/ffllm/12/images/pollBar.gif';
+Poll.theMonths = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+Poll.today = new Date();
+
+Poll.prototype = {
+	
+	pollCode: -1,
+	isTeamVoting: false,
+	pollResponse: null,
+	isPassive: true,
+	isAllowedToVote: true,
+	options: [],
+	votes: [],
+	maxBarWidth: 0,
+	responseUrl: '',
+	selectedOption: null,
+		
+	barWidth: 0,
+	pollBodyElementName: '',
+	pollOptionsElementName: '',
+	pollSelOptionElementName: '',
+	
+	initialize: function(args) {	
+	
+		this.pollCode = args.pollCode;
+		this.isTeamVoting = args.isTeamVoting;
+		this.isPassive = args.isPassive;
+		this.isAllowedToVote = args.isAllowedToVote;
+		this.maxBarWidth = args.maxBarWidth;
+		this.responseUrl = args.responseUrl;
+		this.options = args.options;
+		this.votes = args.votes;
+		this.pollResponse = args.pollResponse;
+
+		if (this.pollResponse != null && this.pollResponse.vote < 0) {
+			this.pollResponse = null;
+		}
+
+		this.pollBodyElementName = 'poll' + this.pollCode + '_body';	
+		this.pollOptionsElementName = 'poll' + this.pollCode + '_options';
+		this.pollSelOptionElementName = 'poll' + this.pollCode + '_selOpt';	
+		
+		this.render();		
+	},
+
+	render:function() {
+		if (this.pollResponse != null || !this.isAllowedToVote) { //  || this.isPassive
+
+			this.renderResultsView();
+		} else {		
+			this.renderVoteView();			
+		}
+	},
+	
+	vote: function() {
+
+		if (this.selectedOption > -1) {
+		
+			this.pollResponse = new PollResponse(this.selectedOption);
+			v = this.pollResponse.vote
+			if (this.isAllowedToVote) {
+				this.votes[this.selectedOption]++;
+				this.render();
+				if (this.isPassive) { 
+					var passiveResURL = String(this.responseUrl).replace("PASSIVEVOTE", v);
+					window.location.href = passiveResURL;
+				} else { window.location.href = this.responseUrl + v; }
+			}
+		} 
+		
+	},
+	
+	renderResultsView: function() {
+		var newHtml = '';
+		var totalVotes = 0;
+		
+		for(i = 0; i < this.votes.length; i++) {
+			totalVotes += this.votes[i];
+		}
+		
+		Element.update(this.pollBodyElementName, '');
+	
+		for(var ct = 0; ct < this.options.length; ct++) {
+			var opt = this.options[ct];
+			if (this.votes[ct] == 0) {
+				var barWidth = 1;
+				var votePct = 0;
+			} else {
+				var barWidth = Math.max(Math.round(this.maxBarWidth * (this.votes[ct] / totalVotes)), 1);
+				var votePct = Math.round((100 / totalVotes) * this.votes[ct]);
+			}
+			var plural = (this.votes[ct] != 1 ? 's' : '');
+			newHtml += '<div style="display:block;margin-top:8px;">';
+			if (this.votes[ct] > 0) {
+				newHtml += '<img src="' + Poll.barImagePath + '" height="10" width="' + barWidth + '" border="0" /> ';
+			}
+			newHtml += votePct + '%<br />' + opt;
+			if (this.pollResponse != null && this.pollResponse.vote == ct) {
+				newHtml += '*';
+			}
+			newHtml += ' <nobr>(' + this.votes[ct] + ' vote' + plural + ')</nobr></div>';
+		}
+		
+		newHtml += '<div style="display:block;margin-top:16px;">'
+		if (this.pollResponse != null) {
+			newHtml += '<em>You';			
+			newHtml += ' voted on ' + this.pollResponse.voteDate + '</em><br>';
+		} 
+		
+		newHtml += 'Total Votes: ' + totalVotes + '&nbsp;&nbsp;(One per ';
+		if(this.isTeamVoting) { 
+			newHtml += 'Team' 
+		} else { 
+			newHtml += 'Owner' 
+		}; 
+		newHtml += ')</div>';	
+		preloadImage = new Image(1, 10); 
+		preloadImage.src=Poll.barImagePath; 
+		new Insertion.Bottom($(this.pollBodyElementName), newHtml);
+	},
+	
+	renderVoteView: function() {
+		var _this = this;
+		Element.update(this.pollBodyElementName, '');
+		
+		for(var ct = 0; ct < this.options.length; ct++) {
+			radioId = this.pollOptionsElementName + ct;
+		
+			newHtml = '<input name="' + this.pollOptionsElementName + '" id="' + radioId + '" type="radio" value="' + ct + '" >' + this.options[ct] + '<br />\n';	
+			new Insertion.Bottom($(this.pollBodyElementName), newHtml);		
+			
+			$(radioId).onclick = function () {
+				_this.selectedOption = this.value;
+			}
+		}
+		new Insertion.Bottom($(this.pollBodyElementName), '<br />');
+		
+		var voteButton = document.createElement('INPUT');
+		voteButton.value = 'Vote!';
+		voteButton.type = 'button';
+		voteButton.className = 'sidebar';
+		voteButton.onclick = function (event) {   
+			_this.vote();
+		};		
+		$(this.pollBodyElementName).appendChild(voteButton);
+			
+		newHtml = '<br />(One vote per ';		
+		if(this.isTeamVoting) { newHtml += 'Team' } else { newHtml += 'Owner' }; 
+		newHtml += ')';
+		
+		new Insertion.Bottom($(this.pollBodyElementName), newHtml);	
+	}
+}
+
+
+PollResponse = Class.create();
+PollResponse.prototype = {
+
+	vote: -1,
+	voteDate: Poll.theMonths[Poll.today.getMonth()] + ' ' + Poll.today.getDate(),
+	
+	initialize: function(vote, voteDate) {
+		this.vote = vote;
+		if (voteDate == null) {
+			this.voteDate = Poll.theMonths[Poll.today.getMonth()] + ' ' + Poll.today.getDate();
+		} else {
+			this.voteDate = voteDate;
+		}
+	}
+
+}
+</script>
+<script type="text/javascript"></script>
+</head><body class="trans-fantasy context-boxscore games-ad-none">
+<!--[if IE 6]><div class="ie ie6"><![endif]-->
+<!--[if IE 7]><div class="ie ie7"><![endif]-->
+<!--[if IE 8]><div class="ie ie8"><![endif]-->
+<div class="bg-elements">
+<table class="maincontainertbl" cellpadding="0" cellspacing="0"><tr><td class="maincontainertblcell" valign="top" id="maincontainertblcell"><div id="header" class="container">
+<!-- ////////// start: Transitional Header ////////// --><div class="top-bar">
+<!-- begin uni login -->
+<script type="text/javascript">
+var returnURL = document.location.href;
+var anCV = "";
+var myEspnText = {'welcometext':'Welcome','register':'Register','signin':'Sign In','signout':'Sign Out','heliumdown':'Login Temporarily Unavailable','activateinsider':'Activate Insider'};
+</script>
+
+
+<form id="form-memberarea">
+<input type="hidden" name="language" id="language" value="en"/>
+<input type="hidden" name="affiliateName" id="memberAreaAffiliateName" value="espn_fantgames"/>
+<input type="hidden" name="regFormId" id="regFormId" value="espn_ffl"/>
+</form>
+<div class="signin" id="signin"></div>
+<script>espn.memberservices.welcome();</script><div class="nav-edition editions">
+<label>EDITIONS:</label>
+<ul class="main">
+	<li class="e-usa"><a href="http://espn.go.com/" name="&amp;lpos=editionsnav&amp;lid=usa">USA</a></li>
+	<li class="e-deportes"><a href="http://espndeportes.espn.go.com/" name="&amp;lpos=editionsnav&amp;lid=deportes">DEPORTES</a></li>
+	<li class="last dropdown">
+	<ul class="">
+	<li class="selected">More</li>
+	<li><a href="http://www.espnstar.com/" name="&amp;lpos=editionsnav&amp;lid=asia">Asia</a></li>
+	<li><a href="http://www.espn.com.au" name="&amp;lpos=editionsnav&amp;lid=australia">Australia</a></li>
+	<li><a href="http://www.espn.com.br" name="&amp;lpos=editionsnav&amp;lid=brazil">Brazil</a></li>
+	<li><a href="http://www.espn.co.uk/" name="&amp;lpos=editionsnav&amp;lid=uk">United Kingdom</a></li>
+	</ul>
+	</li>
+</ul>
+</div>
+
+<div class="nav-edition">
+<label>CITIES:</label>
+<ul class="main">
+	<li class="e-boston"><a href="http://espn.go.com/boston/" name="&amp;lpos=citynav&amp;lid=boston">BOSTON</a></li>
+	<li class="e-chicago"><a href="http://espn.go.com/chicago/" name="&amp;lpos=citynav&amp;lid=chicago">CHICAGO</a></li>
+	<li class="e-dallas"><a href="http://espn.go.com/dallas/" name="&amp;lpos=citynav&amp;lid=dallas">DALLAS</a></li>
+	<li class="e-losangeles"><a href="http://espn.go.com/los-angeles/" name="&amp;lpos=citynav&amp;lid=losangeles">LOS ANGELES</a></li>
+	<li class="last e-newyork"><a href="http://espn.go.com/new-york/" name="&amp;lpos=citynav&amp;lid=newyork">NEW YORK</a></li>
+</ul>
+</div></div>
+<div class="espn-logo">
+<h1>
+<a href="http://espn.go.com" class="espn">ESPN</a>
+<img src="http://g.espncdn.com/s/ffllm/12/images/shell/bgHead_leaguemanager.png" height="69">
+</h1>
+</div>
+<div class="presby">
+
+<!-- begin ad tag (tile=1) -->
+<script language="JavaScript" type="text/javascript">
+var adSegments = espn.core.ad_segments();
+var pipedAdSegments = adSegments.replace(/;/g, "|").substring(0,adSegments.length-1);
+var adURI = "espn.us.com.games/football" + ";pgn=AlgersvsMaliaBoxScore%3AWeek1;pgtyp=boxscore;lang=en;gm=ffl;pos=SponsoredByLogoHeader;" + adSegments + "u=swid={D15BC8A5-9ED3-4A6A-AC5A-0283D931C393}|pgn=AlgersvsMaliaBoxScore%3AWeek1|pgtyp=boxscore|lang=en|gm=ffl|pos=SponsoredByLogoHeader|" + pipedAdSegments + ";dcopt=ist;sz=150x45;tile=1;ord=9969074" + "?";
+document.write('<script language="JavaScript" src="http://ad.Doubleclick.net/adj/' + adURI + '" type="text/javascript"><\/script>');
+</script><noscript><a href="http://ad.doubleclick.net/jump/espn.us.com.games/football;pgn=AlgersvsMaliaBoxScore%3AWeek1;pgtyp=boxscore;lang=en;gm=ffl;pos=SponsoredByLogoHeaderu=swid={D15BC8A5-9ED3-4A6A-AC5A-0283D931C393}|pgn=AlgersvsMaliaBoxScore%3AWeek1|pgtyp=boxscore|lang=en|gm=ffl|pos=SponsoredByLogoHeader|;dcopt=ist;sz=150x45tile=1;ord=9969074" target="_blank"><img src="http://ad.doubleclick.net/ad/espn.us.com.games/football;pgn=AlgersvsMaliaBoxScore%3AWeek1;pgtyp=boxscore;lang=en;gm=ffl;pos=SponsoredByLogoHeaderu=swid={D15BC8A5-9ED3-4A6A-AC5A-0283D931C393}|pgn=AlgersvsMaliaBoxScore%3AWeek1|pgtyp=boxscore|lang=en|gm=ffl|pos=SponsoredByLogoHeader|;dcopt=ist;sz=150x45tile=1;ord=9969074" width="150" height="45" border="0" alt=""></a></noscript>
+<!-- End ad tag -->
+
+</div>	  <div id="shop">
+	  	<a class="shop-btn" href="http://espnshop.com/entry.point?target=Z&amp;source=ESPN_HPHEADERLINK:SHOPBUTTONHEADER:6_1_10" name="&lpos=sitenavdefault&lid=sitenav_shopbutton">Shop</a>
+	  </div>
+	  <div id="nav-main-search">
+<form id="searchBox" name="searchBox" action="http://search.espn.go.com/results" method="get" accept-charset="utf-8" class="clearfix">
+<div class="clearfix">
+<input autocomplete="off" class="text ui-autocomplete-input" type="text" placeholder="Search" name="searchString" id="searchString" role="textbox" aria-autocomplete="list" aria-haspopup="true"><input type="hidden" name="page" id="page" value="null">
+<input type="hidden" name="fromForm" value="true">
+<input class="submit" type="submit" value="">
+</div>
+</form>
+</div>
+</div>
+<div id="subheader"><div id="content-wrapper">
+<div id="content" class="container">
+<div>
+
+<!--[if lte IE 6]>
+<div class="span-6" id="browser-alert-wrapper" style="display: none;">
+	<div class="mod-container mod-no-header-footer browser-alert">
+		<div class="mod-content">
+			<div class="gradient-container">
+				<h1><span>Your Web Browser</span> is no longer supported</h1>
+				<p>To experience everything that ESPN.com has to offer, we recommend that you upgrade to a newer version of your web browser. Click the upgrade button to the right or <a href="http://espn.go.com/espn/news/story?id=5630562">learn more</a>.</p>
+				<ul>
+					<li><a class="btn-upgrade" href="'+browserUrl+'">Upgrade</a></li>
+					<li><a class="btn-faq" href="http://espn.go.com/espn/news/story?id=5630562">FAQs</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	(function($) {
+		  setTimeout(function () {
+				var $alertWrapper = $('#browser-alert-wrapper'),
+					  browserAlertOptOut = espn.cookie.get('browseralert');
+				if (browserAlertOptOut != 'true') {
+					  $("<a class=\"btn-close\" href=\"#\">Close</a>").bind('click', function (e) {
+							$alertWrapper.hide();
+							espn.cookie.set('browseralert','true',30);
+							return false;
+					  }).appendTo('.gradient-container',$alertWrapper);
+					  $alertWrapper.show();
+					  espn.cookie.set('browseralert','true');
+				}
+		  },100);
+	})(jQuery);
+</script>
+<![endif]-->
+<div class="header-ad">
+
+<!-- begin ad tag (tile=2) -->
+<script language="JavaScript" type="text/javascript">
+var adSegments = espn.core.ad_segments();
+var pipedAdSegments = adSegments.replace(/;/g, "|").substring(0,adSegments.length-1);
+var adURI = "espn.us.com.games/football" + ";pgn=leaders;pgtyp=boxscore;lang=en;gm=ffl;pos=pencil_top;" + adSegments + "u=swid={D15BC8A5-9ED3-4A6A-AC5A-0283D931C393}|pgn=leaders|pgtyp=boxscore|lang=en|gm=ffl|pos=pencil_top|" + pipedAdSegments + ";dcopt=ist;sz=924x50;tile=2;ord=9969074" + "?";
+document.write('<script language="JavaScript" src="http://ad.Doubleclick.net/adj/' + adURI + '" type="text/javascript"><\/script>');
+</script><noscript><a href="http://ad.doubleclick.net/jump/espn.us.com.games/football;pgn=leaders;pgtyp=boxscore;lang=en;gm=ffl;pos=pencil_topu=swid={D15BC8A5-9ED3-4A6A-AC5A-0283D931C393}|pgn=leaders|pgtyp=boxscore|lang=en|gm=ffl|pos=pencil_top|;dcopt=ist;sz=924x50tile=2;ord=9969074" target="_blank"><img src="http://ad.doubleclick.net/ad/espn.us.com.games/football;pgn=leaders;pgtyp=boxscore;lang=en;gm=ffl;pos=pencil_topu=swid={D15BC8A5-9ED3-4A6A-AC5A-0283D931C393}|pgn=leaders|pgtyp=boxscore|lang=en|gm=ffl|pos=pencil_top|;dcopt=ist;sz=924x50tile=2;ord=9969074" width="924" height="50" border="0" alt=""></a></noscript>
+<!-- End ad tag -->
+
+</div><div class="nav-main-breadcrumbs-row" style="height: 28px;">
+<div class="nav-main-breadcrumbs">
+<a href="http://espn.go.com">ESPN</a> &raquo; <a href="http://games.espn.go.com/ffl/frontpage">Free Fantasy Football</a> &raquo; <a href="/ffl/leagueoffice?leagueId=1032293">Fantasy '13</a> &raquo; <a title="Langdon Algers (Andrew Gallant)" href="/ffl/clubhouse?leagueId=1032293&amp;teamId=2&amp;seasonId=2012" target="_top">Langdon Algers</a></div>
+<div class="playerSearchDiv"><form class="playerSearchForm" name="playerSearch" id="playerSearch" action="/ffl/freeagency" onsubmit="return playerSuggester.submitSelectedPlayer();" method="GET"><div><input type="hidden" name="leagueId" value="1032293"><input type="hidden" name="teamId" value="2"><input type="hidden" name="avail" value="-1"><input type="hidden" name="slotCategoryGroup" value="-1">Find a Player: <input class="playerSearchNameInput" type="text" id="playerName" name="search" onkeyup="playerSuggester.handleKeyUp(event, this.value);" value="Last Name" style="color:#999;" onfocus="playerSuggester.focus();" onblur="playerSuggester.blur();"></div></form><div style="margin: 0px;"><div id="playerSuggestions" style="display: none;" onmouseover="playerSuggester.suggestDivOver();" onmouseout="playerSuggester.suggestDivOut();"></div></div></div><script type="text/javascript">playerSearchObj=new Object();playerSearchObj.varName = "playerSuggester";playerSearchObj.suggestDiv = "playerSuggestions";playerSearchObj.inputField = "playerName";playerSearchObj.cssPrefix = "";playerSearchObj.statId = null;playerSearchObj.chartSplitType = null;var playerSuggester = new PlayerSuggester(playerSearchObj);</script><div class="comparePlayersLinkDiv"><a id="comparePlayersLauncher" href="" instance="_comparePlayers" content="ajax#/ffl/playertable/prebuilt/compareplayers?leagueId=1032293&teamId=2&playerCompare=true" class="flexpop" modal="true" fpopStyle="modal">Compare Players</a> (<span id="comparePlayersCount">0</span>)</div><div class="clear"></div></div>
+<div class="games-nav"><ul id="games-tabs"><li class=" "><a href="/ffl/leagueoffice?leagueId=1032293&seasonId=2012">League</a></li><li class=" "><a href="/ffl/clubhouse?leagueId=1032293&teamId=2&seasonId=2012">My Team</a></li><li class=" "><a href="/ffl/freeagency?leagueId=1032293&teamId=2&seasonId=2012">Players</a></li><li class=" "><a href="/ffl/standings?leagueId=1032293&seasonId=2012">Standings</a></li><li class=" "><a href="/ffl/scoreboard?leagueId=1032293&seasonId=2012">Scoreboard</a></li><li class=" games-teams-btn"><a href="#">Teams</a><div class="clear"></div><ul id="games-tabs1"><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=1&amp;seasonId=2012">Team Malia <span class="alt-info">(MALI)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=2&amp;seasonId=2012">Langdon Algers <span class="alt-info">(GALL)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=4&amp;seasonId=2012">Team Skogg <span class="alt-info">(SKOG)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=5&amp;seasonId=2012">Laser Rocket Arm <span class="alt-info">(MUIS)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=6&amp;seasonId=2012">Team Lockwood <span class="alt-info">(LOCK)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=7&amp;seasonId=2012">Lions in the PLAYOFFS?!?!? <span class="alt-info">(DETR)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=9&amp;seasonId=2012">Team SKLAR <span class="alt-info">(SKLA)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=12&amp;seasonId=2012">Team Li <span class="alt-info">(LI)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=13&amp;seasonId=2012">Team B <span class="alt-info">(B)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=14&amp;seasonId=2012">Team Errichiello <span class="alt-info">(ERRI)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=15&amp;seasonId=2012">Team buma <span class="alt-info">(BUMA)</span></a></li><li><a href="/ffl/clubhouse?leagueId=1032293&amp;teamId=16&amp;seasonId=2012">got Weeden my pocket <span class="alt-info">(THC)</span></a></li></ul></li><li class=" off games-fancast-btn"><a href="/ffl/fantasycast#seasonId=2012&amp;leagueId=1032293&amp;teamId=2" onclick="if (typeof launchFantasycast == 'function') return !launchFantasycast('/ffl/fantasycast#seasonId=2012&amp;leagueId=1032293&amp;teamId=2');"></a></li><li class="games-myfntsyteam-btn" style="position: absolute; left: 849px;"><a href="#">My Fantasy Teams<img height="4" align="top" width="7" border="0" src="http://g.espncdn.com/s/ffllm/12/images/shell/yellow_dropdwn_arrow.png"/></a><div class="clear"></div><ul id="games-tabs2" style="left: -73px;"><li><a href="/ffl/tools/editmyteams?leagueId=1032293" class="edit-list-option">Edit This List</a></li><li><a href="/ffl/clubhouse?leagueId=1032293&teamId=2&seasonId=2012">Langdon Algers<br><span class="alt-info">Fantasy '13</span></a></li><li><a href="/ffl/clubhouse?leagueId=115031&teamId=1&seasonId=2012">Team Gallant<br><span class="alt-info">BurntSushi</span></a></li></ul></li></ul></div><div class="gamesmain container">
+<div class="games-innercol">
+<div class="games-innercol2">
+<div class="games-fullcol games-fullcol-extramargin"><div class="games-pageheader"><div style="float:left;"></div><div style="float:left;"><h1>Algers vs Malia Box Score <em>Week 1</em></h1></div><div class="clear"></div></div><div style="width: 946px; height:40px; padding:5px;" class="bodyCopy">
+<div style="float:left;text-align:left;margin:3px 0 10px 0;vertical-align:baseline;"><br /><a href="http://scores.espn.go.com/nfl/scoreboard" target="_blank">NFL Scoreboard</a> | <a href="/ffl/leaders?leagueId=1032293&scoringPeriodId=1">Scoring Leaders</a></div><div style="float:right;text-align:right;padding-right:4px;"><form style="margin-bottom:10px;"><b>Box Scores:</b> <select id="selectmatchuptoview" onchange="gotosite('http://games.espn.go.com/ffl/boxscorefull?' + this.value)" class="sidebar"><option value="leagueId=1032293&teamId=1&scoringPeriodId=1&seasonId=2012&view=scoringperiod&version=full"  selected="selected" selected="selected">Malia @ Algers</option><option value="leagueId=1032293&teamId=4&scoringPeriodId=1&seasonId=2012&view=scoringperiod&version=full" >Skogg @ PLAYOFF...</option><option value="leagueId=1032293&teamId=5&scoringPeriodId=1&seasonId=2012&view=scoringperiod&version=full" >Rocket Arm @ Lockwood</option><option value="leagueId=1032293&teamId=9&scoringPeriodId=1&seasonId=2012&view=scoringperiod&version=full" >SKLAR @ Li</option><option value="leagueId=1032293&teamId=13&scoringPeriodId=1&seasonId=2012&view=scoringperiod&version=full" >B @ my pocket</option><option value="leagueId=1032293&teamId=14&scoringPeriodId=1&seasonId=2012&view=scoringperiod&version=full" >Errichi... @ buma</option></select></form><a href="/ffl/boxscorequick?leagueId=1032293&amp;teamId=2&amp;scoringPeriodId=1&amp;seasonId=2012&amp;view=scoringperiod&amp;version=quick">Quick Box Score</a> | <b>Full Box Score</b> | <a href="/ffl/boxscorescoring?leagueId=1032293&amp;teamId=2&amp;scoringPeriodId=1&amp;seasonId=2012&amp;view=scoringperiod&amp;version=scoring">Scoring Breakdown</a></div></div>
+<div id="teamInfos" style="clear:both; width:956px; margin-bottom:10px;"><div style="float:left;"><div style="float:left; border: 1px solid #DDDDDD; padding: 0px; float: left; width:455px; background:#EFEFEF;"><div style="float:left; border-right:1px solid #dddddd; line-height:0px;"><a style="border:none; width:151; height:129.0;" href="/ffl/clubhouse?leagueId=1032293&teamId=2"><img style="border:none" src="http://www.burntsushi.net/images/langdon-alger.jpg" width=151 height=129.0 /></a></div><div style="text-align:left; padding:5px; float:left; width:285px; line-height:18px;" class="bodyCopy">
+<div style="font-size:18px; margin-bottom:14px; font-family:Helvetica,sans-serif;"><b>Langdon Algers</b></div>
+	
+	<style>
+	.teamInfoOwnerCallouts { width: 290px; height: 48px; display: block; margin-top: -2px; margin-bottom: 3px; } 
+	.teamInfoOwnerMug { width: 35px; height: 48px; display:inline; float: left; padding: 0; }
+	.teamInfoOwnerData { width: 104px; padding: 3px; overflow: hidden; height: 42px; display: inline; float: left; }
+	</style>
+	
+	<div class="teamInfoOwnerCallouts"><div class="teamInfoOwnerMug"><a href="http://sportsnation.espn.go.com/fans/SkoeyMitchell" target="_blank"><img src="http://avatars.espn.go.com/avatars/skoeymitchell/48/skoeymitchell.jpg" border="0" width="35" height="48" onerror="this.src='http://assets.espn.go.com/i/profile/default/silo2_guy_35.jpg'" /></a></div><div class="teamInfoOwnerData"><a href="http://sportsnation.espn.go.com/fans/SkoeyMitchell" target="_blank">Andrew Gallant</a></div></div><b>Record:</b> 0-1-0&nbsp;&nbsp;&nbsp;&nbsp;<b>Streak:</b> L1<br /><b>Standing:</b> T-4th in AFC (1 GB)<br /></div>
+</div></div><div style="float:right;"><div style="float:left; border: 1px solid #DDDDDD; padding: 0px; float: left; width:455px; background:#EFEFEF;"><div style="float:left; border-right:1px solid #dddddd; line-height:0px;"><a style="border:none; width:151; height:129;" href="/ffl/clubhouse?leagueId=1032293&teamId=1"><img style="border:none" src="http://g.espncdn.com/s/ffllm/12/images/clubhouse/noLogoSilo.gif" width=151 height=129 /></a></div><div style="text-align:left; padding:5px; float:left; width:285px; line-height:18px;" class="bodyCopy">
+<div style="font-size:18px; margin-bottom:14px; font-family:Helvetica,sans-serif;"><b>Team Malia</b></div>
+	
+	<style>
+	.teamInfoOwnerCallouts { width: 290px; height: 48px; display: block; margin-top: -2px; margin-bottom: 3px; } 
+	.teamInfoOwnerMug { width: 35px; height: 48px; display:inline; float: left; padding: 0; }
+	.teamInfoOwnerData { width: 104px; padding: 3px; overflow: hidden; height: 42px; display: inline; float: left; }
+	</style>
+	
+	<div class="teamInfoOwnerCallouts"><div class="teamInfoOwnerMug"><a href="http://sportsnation.espn.go.com/fans/nicky_m_30" target="_blank"><img src="http://avatars.espn.go.com/avatars/nicky_m_30/48/nicky_m_30.jpg" border="0" width="35" height="48" onerror="this.src='http://assets.espn.go.com/i/profile/default/silo2_guy_35.jpg'" /></a></div><div class="teamInfoOwnerData"><a href="http://sportsnation.espn.go.com/fans/nicky_m_30" target="_blank">Nick Malia</a></div></div><b>Record:</b> 1-0-0&nbsp;&nbsp;&nbsp;&nbsp;<b>Streak:</b> W1<br /><b>Standing:</b> T-1st in AFC<br /></div>
+</div></div><div style="clear: both;"></div></div><br /><div style="float:left; width:956px;"><div class="games-alert-mod alert-mod2 games-beige-alert"><center>Questions about the scoring in this matchup?  <a href="/ffl/boxscore?leagueId=1032293&teamId=2&scoringPeriodId=1&seasonId=2012&view=scoringperiod&version=scoring&mode=h2h">View the Scoring Breakdown</a> to see how all of the points were scored.</center></div><br /></div><div style="width: 100%; margin-bottom: 40px; clear: both;"><table class="playerTableTable tableBody" cellpadding="0" cellspacing="1" border="0" id="playertable_0"><tr class="playerTableBgRowHead tableHead playertableTableHeader"><td colspan="100">Langdon Algers Box Score</td></tr><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">STARTERS: OFFENSIVE PLAYERS</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="4">PASSING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RUSHING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RECEIVING</th><td class="sectionLeadingSpacer"></td><th colspan="3">MISC</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each Pass Completed">C</span>/<span title="Each Pass Attempted">A</span></td><td class="playertableStat"><span title="Passing Yards">YDS</span></td><td class="playertableStat"><span title="TD Pass">TD</span></td><td class="playertableStat"><span title="Interceptions Thrown">INT</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Rushing Attempts">RUSH</span></td><td class="playertableStat"><span title="Rushing Yards">YDS</span></td><td class="playertableStat"><span title="TD Rush">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each reception">REC</span></td><td class="playertableStat"><span title="Receiving Yards">YDS</span></td><td class="playertableStat"><span title="TD Reception">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Total 2pt Conversions">2PC</span></td><td class="playertableStat"><span title="Total Fumbles Lost">FUML</span></td><td class="playertableStat"><span title="Total Return TD">RTD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr5529" class="pncPlayerRow playerTableBgRow0"><td id="slot_5529" class="slot_0 playerSlot" style="font-weight: bold;">QB</td><td class="playertablePlayerName" id="playername_5529" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="5529" teamId="2" seasonId="2012" cache="true">Philip Rivers</a>, SD&nbsp;QB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="5529" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_and_video.png" height="12" width="23" border="0" style="margin:0 6px 0 6px" title="Breaking News and Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=1&playerId=70113&seasonId=2012" class="flexpop" instance="_ppc">@Oak</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320910013_24 onFieldNotch">&raquo;</span> <a class="gamestatus_320910013_24" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320910013" target="_blank">W 22-14</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">24/33</td><td class="playertableStat ">231</td><td class="playertableStat ">1</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">-2</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">15</td></tr><tr id="plyr11278" class="pncPlayerRow playerTableBgRow1"><td id="slot_11278" class="slot_2 playerSlot" style="font-weight: bold;">RB</td><td class="playertablePlayerName" id="playername_11278" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11278" teamId="2" seasonId="2012" cache="true">Matt Forte</a>, Chi&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="11278" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_and_video.png" height="12" width="23" border="0" style="margin:0 6px 0 6px" title="Breaking News and Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70211&seasonId=2012" class="flexpop" instance="_ppc">Ind</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909003_3 onFieldNotch">&raquo;</span> <a class="gamestatus_320909003_3" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909003" target="_blank">W 41-21</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">16</td><td class="playertableStat ">80</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">3</td><td class="playertableStat ">40</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">21</td></tr><tr id="plyr14005" class="pncPlayerRow playerTableBgRow0"><td id="slot_14005" class="slot_2 playerSlot" style="font-weight: bold;">RB</td><td class="playertablePlayerName" id="playername_14005" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14005" teamId="2" seasonId="2012" cache="true">DeMarco Murray</a>, Dal&nbsp;RB</td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70219&seasonId=2012" class="flexpop" instance="_ppc">@NYG</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320905019_6 onFieldNotch">&raquo;</span> <a class="gamestatus_320905019_6" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320905019" target="_blank">W 24-17</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">20</td><td class="playertableStat ">131</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">9</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">16</td></tr><tr id="plyr14885" class="pncPlayerRow playerTableBgRow1"><td id="slot_14885" class="slot_3 playerSlot" style="font-weight: bold;">RB/WR</td><td class="playertablePlayerName" id="playername_14885" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14885" teamId="2" seasonId="2012" cache="true">Doug Martin</a>, TB&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14885" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70229&seasonId=2012" class="flexpop" instance="_ppc">Car</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909027_27 onFieldNotch">&raquo;</span> <a class="gamestatus_320909027_27" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909027" target="_blank">W 16-10</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">24</td><td class="playertableStat ">95</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">4</td><td class="playertableStat ">23</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">15.8</td></tr><tr id="plyr11270" class="pncPlayerRow playerTableBgRow0"><td id="slot_11270" class="slot_4 playerSlot" style="font-weight: bold;">WR</td><td class="playertablePlayerName" id="playername_11270" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11270" teamId="2" seasonId="2012" cache="true">Jordy Nelson</a>, GB&nbsp;WR<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="11270" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70325&seasonId=2012" class="flexpop" instance="_ppc">SF</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909009_9 onFieldNotch">&raquo;</span> <a class="gamestatus_320909009_9" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909009" target="_blank">L 22-30</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">5</td><td class="playertableStat ">64</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">13.4</td></tr><tr id="plyr11458" class="pncPlayerRow playerTableBgRow1"><td id="slot_11458" class="slot_4 playerSlot" style="font-weight: bold;">WR</td><td class="playertablePlayerName" id="playername_11458" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11458" teamId="2" seasonId="2012" cache="true">Steve Johnson</a>, Buf&nbsp;WR&nbsp;&nbsp;<span title="Probable" style="font-weight:bold;color: red;">P</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="11458" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70320&seasonId=2012" class="flexpop" instance="_ppc">@NYJ</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909020_2 onFieldNotch">&raquo;</span> <a class="gamestatus_320909020_2" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909020" target="_blank">L 28-48</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">4</td><td class="playertableStat ">55</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">15.5</td></tr><tr id="plyr6016" class="pncPlayerRow playerTableBgRow0"><td id="slot_6016" class="slot_4 playerSlot" style="font-weight: bold;">WR</td><td class="playertablePlayerName" id="playername_6016" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="6016" teamId="2" seasonId="2012" cache="true">Malcom Floyd</a>, SD&nbsp;WR<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="6016" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_and_video.png" height="12" width="23" border="0" style="margin:0 6px 0 6px" title="Breaking News and Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70313&seasonId=2012" class="flexpop" instance="_ppc">@Oak</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320910013_24 onFieldNotch">&raquo;</span> <a class="gamestatus_320910013_24" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320910013" target="_blank">W 22-14</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">4</td><td class="playertableStat ">66</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">16.6</td></tr><tr id="plyr12549" class="pncPlayerRow playerTableBgRow1"><td id="slot_12549" class="slot_6 playerSlot" style="font-weight: bold;">TE</td><td class="playertablePlayerName" id="playername_12549" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="12549" teamId="2" seasonId="2012" cache="true">Brandon Pettigrew</a>, Det&nbsp;TE<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="12549" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=4&playerId=70414&seasonId=2012" class="flexpop" instance="_ppc">StL</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909008_8 onFieldNotch">&raquo;</span> <a class="gamestatus_320909008_8" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909008" target="_blank">W 27-23</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">5</td><td class="playertableStat ">77</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">12.7</td></tr></table><table class="playerTableTable tableBody" cellpadding="0" cellspacing="1" border="0" id="playertable_1"><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">STARTERS: KICKERS</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="5">KICKING</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted Inside 40 Yards">1-39</span></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted 40-49 Yards">40-49</span></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted 50+ Yards">50+</span></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted">TOT</span></td><td class="playertableStat"><span title="Extra Points Made / Extra Points Attempted">XP</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr8461" class="pncPlayerRow playerTableBgRow0"><td id="slot_8461" class="slot_17 playerSlot" style="font-weight: bold;">K</td><td class="playertablePlayerName" id="playername_8461" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="8461" teamId="2" seasonId="2012" cache="true">Mike Nugent</a>, Cin&nbsp;K</td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=5&playerId=70533&seasonId=2012" class="flexpop" instance="_ppc">@Bal</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320910033_4 onFieldNotch">&raquo;</span> <a class="gamestatus_320910033_4" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320910033" target="_blank">L 13-44</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2/2</td><td class="playertableStat ">0/0</td><td class="playertableStat ">0/0</td><td class="playertableStat ">2/2</td><td class="playertableStat ">1/1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">7</td></tr></table><table class="playerTableTable tableBody" cellpadding="0" cellspacing="1" border="0" id="playertable_2"><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">STARTERS: TEAM D/ST</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="6" width="225px">TEAM DEFENSE</th><td class="sectionLeadingSpacer"></td><th colspan="3">MISC</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Fumble or INT Return for TD">TD</span></td><td class="playertableStat"><span title="Each Interception">INT</span></td><td class="playertableStat"><span title="Each Fumble Recovered">FR</span></td><td class="playertableStat"><span title="Each Sack">SCK</span></td><td class="playertableStat"><span title="Each Safety">SFTY</span></td><td class="playertableStat"><span title="Points Allowed">PA</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Kickoff Return TD">KTD</span></td><td class="playertableStat"><span title="Punt Return TD">PRTD</span></td><td class="playertableStat"><span title="Blocked Punt, PAT or FG">BLK</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr60017" class="pncPlayerRow playerTableBgRow0"><td id="slot_60017" class="slot_16 playerSlot" style="font-weight: bold;">D/ST</td><td class="playertablePlayerName" id="playername_60017" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="60017" teamId="2" seasonId="2012" cache="true">Patriots D/ST</a>&nbsp;D/ST<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="2" leagueId="1032293" playerId="60017" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/video_breaking.png" height="11" width="19" border="0" style="margin:0 6px 0 6px" title="Breaking Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=16&playerId=71610&seasonId=2012" class="flexpop" instance="_ppc">@Ten</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909010_17 onFieldNotch defense">&raquo;</span> <a class="gamestatus_320909010_17" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909010" target="_blank">W 34-13</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">1</td><td class="playertableStat ">1</td><td class="playertableStat ">2</td><td class="playertableStat ">0</td><td class="playertableStat ">13</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">16</td></tr></table><div class="boxscoreDangler"><div class="danglerBox totalScore"title="149.04"id="tmTotalPts_2">149</div>TOTAL POINTS: </div><table class="playerTableTable tableBody hideableGroup" cellpadding="0" cellspacing="1" border="0" id="playertable_3" style="display:none;"><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">BENCH: OFFENSIVE PLAYERS</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="4">PASSING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RUSHING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RECEIVING</th><td class="sectionLeadingSpacer"></td><th colspan="3">MISC</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each Pass Completed">C</span>/<span title="Each Pass Attempted">A</span></td><td class="playertableStat"><span title="Passing Yards">YDS</span></td><td class="playertableStat"><span title="TD Pass">TD</span></td><td class="playertableStat"><span title="Interceptions Thrown">INT</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Rushing Attempts">RUSH</span></td><td class="playertableStat"><span title="Rushing Yards">YDS</span></td><td class="playertableStat"><span title="TD Rush">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each reception">REC</span></td><td class="playertableStat"><span title="Receiving Yards">YDS</span></td><td class="playertableStat"><span title="TD Reception">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Total 2pt Conversions">2PC</span></td><td class="playertableStat"><span title="Total Fumbles Lost">FUML</span></td><td class="playertableStat"><span title="Total Return TD">RTD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr14034" class="pncPlayerRow playerTableBgRow0"><td id="slot_14034" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_14034" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14034" teamId="2" seasonId="2012" cache="true">Titus Young</a>, Det&nbsp;WR<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14034" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70314&seasonId=2012" class="flexpop" instance="_ppc">StL</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909008_8 onFieldNotch">&raquo;</span> <a class="gamestatus_320909008_8" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909008" target="_blank">W 27-23</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">11</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">14</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">3.5</td></tr><tr id="plyr11678" class="pncPlayerRow playerTableBgRow1"><td id="slot_11678" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_11678" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11678" teamId="2" seasonId="2012" cache="true">Davone Bess</a>, Mia&nbsp;WR<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="11678" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70334&seasonId=2012" class="flexpop" instance="_ppc">@Hou</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909034_15 onFieldNotch">&raquo;</span> <a class="gamestatus_320909034_15" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909034" target="_blank">L 10-30</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">5</td><td class="playertableStat ">45</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">9.5</td></tr><tr id="plyr14193" class="pncPlayerRow playerTableBgRow0"><td id="slot_14193" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_14193" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14193" teamId="2" seasonId="2012" cache="true">Jacquizz Rodgers</a>, Atl&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14193" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70212&seasonId=2012" class="flexpop" instance="_ppc">@KC</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909012_1 onFieldNotch">&raquo;</span> <a class="gamestatus_320909012_1" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909012" target="_blank">W 40-24</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">7</td><td class="playertableStat ">22</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">13</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">5.5</td></tr><tr id="plyr12724" class="pncPlayerRow playerTableBgRow1"><td id="slot_12724" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_12724" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="12724" teamId="2" seasonId="2012" cache="true">Bernard Scott</a>, Cin&nbsp;RB&nbsp;&nbsp;<span title="Questionable" style="font-weight:bold;color: red;">Q</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="12724" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70233&seasonId=2012" class="flexpop" instance="_ppc">@Bal</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320910033_4 onFieldNotch">&raquo;</span> <a class="gamestatus_320910033_4" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320910033" target="_blank">L 13-44</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">0</td></tr><tr id="plyr14221" class="pncPlayerRow playerTableBgRow0"><td id="slot_14221" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_14221" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14221" teamId="2" seasonId="2012" cache="true">Doug Baldwin</a>, Sea&nbsp;WR&nbsp;&nbsp;<span title="Probable" style="font-weight:bold;color: red;">P</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14221" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70322&seasonId=2012" class="flexpop" instance="_ppc">@Ari</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909022_26 onFieldNotch">&raquo;</span> <a class="gamestatus_320909022_26" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909022" target="_blank">L 16-20</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">5</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">2.5</td></tr><tr id="plyr13969" class="pncPlayerRow playerTableBgRow1"><td id="slot_13969" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_13969" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="13969" teamId="2" seasonId="2012" cache="true">Jake Locker</a>, Ten&nbsp;QB&nbsp;&nbsp;<span title="Questionable" style="font-weight:bold;color: red;">Q</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="13969" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_and_video.png" height="12" width="23" border="0" style="margin:0 6px 0 6px" title="Breaking News and Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=1&playerId=70117&seasonId=2012" class="flexpop" instance="_ppc">NE</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909010_10 onFieldNotch">&raquo;</span> <a class="gamestatus_320909010_10" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909010" target="_blank">L 13-34</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">23/32</td><td class="playertableStat ">229</td><td class="playertableStat ">1</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">11</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">1</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">12.3</td></tr><tr id="plyr13621" class="pncPlayerRow playerTableBgRow0"><td id="slot_13621" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_13621" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="13621" teamId="2" seasonId="2012" cache="true">David Nelson</a>*, Buf&nbsp;WR&nbsp;&nbsp;<span title="IR" style="font-weight:bold;color: red;">IR</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="13621" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70320&seasonId=2012" class="flexpop" instance="_ppc">@NYJ</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909020_2 onFieldNotch">&raquo;</span> <a class="gamestatus_320909020_2" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909020" target="_blank">L 28-48</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">31</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">5.1</td></tr><tr id="plyr11912" class="pncPlayerRow playerTableBgRow1"><td id="slot_11912" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_11912" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11912" teamId="2" seasonId="2012" cache="true">Lance Ball</a>, Den&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="11912" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70223&seasonId=2012" class="flexpop" instance="_ppc">Pit</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909007_7 onFieldNotch">&raquo;</span> <a class="gamestatus_320909007_7" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909007" target="_blank">W 31-19</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">14</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">1.4</td></tr></table><div class="boxscoreDangler hideableGroup" style="display:none;"><div class="danglerBox" id="tmInactivePts_2">39.8</div>BENCH POINTS: </div><div class="playerTableShowHideGroupLink"><a href="#" onclick="togglePlayerTableHiddenGroups();return false;">Show Bench</a></div><div class="playerTableShowHideGroupLink" style="display:none"><a href="#" onclick="togglePlayerTableHiddenGroups();return false;">Hide Bench</a></div></div><div style="width: 100%; margin-bottom: 40px; clear: both;"><table class="playerTableTable tableBody" cellpadding="0" cellspacing="1" border="0" id="playertable_4"><tr class="playerTableBgRowHead tableHead playertableTableHeader"><td colspan="100">Team Malia Box Score</td></tr><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">STARTERS: OFFENSIVE PLAYERS</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="4">PASSING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RUSHING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RECEIVING</th><td class="sectionLeadingSpacer"></td><th colspan="3">MISC</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each Pass Completed">C</span>/<span title="Each Pass Attempted">A</span></td><td class="playertableStat"><span title="Passing Yards">YDS</span></td><td class="playertableStat"><span title="TD Pass">TD</span></td><td class="playertableStat"><span title="Interceptions Thrown">INT</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Rushing Attempts">RUSH</span></td><td class="playertableStat"><span title="Rushing Yards">YDS</span></td><td class="playertableStat"><span title="TD Rush">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each reception">REC</span></td><td class="playertableStat"><span title="Receiving Yards">YDS</span></td><td class="playertableStat"><span title="TD Reception">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Total 2pt Conversions">2PC</span></td><td class="playertableStat"><span title="Total Fumbles Lost">FUML</span></td><td class="playertableStat"><span title="Total Return TD">RTD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr11237" class="pncPlayerRow playerTableBgRow0"><td id="slot_11237" class="slot_0 playerSlot" style="font-weight: bold;">QB</td><td class="playertablePlayerName" id="playername_11237" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11237" teamId="2" seasonId="2012" cache="true">Matt Ryan</a>, Atl&nbsp;QB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="2" leagueId="1032293" playerId="11237" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/video_breaking.png" height="11" width="19" border="0" style="margin:0 6px 0 6px" title="Breaking Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=1&playerId=70112&seasonId=2012" class="flexpop" instance="_ppc">@KC</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909012_1 onFieldNotch">&raquo;</span> <a class="gamestatus_320909012_1" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909012" target="_blank">W 40-24</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">23/31</td><td class="playertableStat ">299</td><td class="playertableStat ">3</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">3</td><td class="playertableStat ">25</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">38.5</td></tr><tr id="plyr11238" class="pncPlayerRow playerTableBgRow1"><td id="slot_11238" class="slot_2 playerSlot" style="font-weight: bold;">RB</td><td class="playertablePlayerName" id="playername_11238" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11238" teamId="2" seasonId="2012" cache="true">Darren McFadden</a>, Oak&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="11238" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_and_video.png" height="12" width="23" border="0" style="margin:0 6px 0 6px" title="Breaking News and Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70224&seasonId=2012" class="flexpop" instance="_ppc">SD</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320910013_13 onFieldNotch">&raquo;</span> <a class="gamestatus_320910013_13" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320910013" target="_blank">L 14-22</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">15</td><td class="playertableStat ">32</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">13</td><td class="playertableStat ">86</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">24.8</td></tr><tr id="plyr14028" class="pncPlayerRow playerTableBgRow0"><td id="slot_14028" class="slot_2 playerSlot" style="font-weight: bold;">RB</td><td class="playertablePlayerName" id="playername_14028" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14028" teamId="2" seasonId="2012" cache="true">Stevan Ridley</a>, NE&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="2" leagueId="1032293" playerId="14028" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/video_breaking.png" height="11" width="19" border="0" style="margin:0 6px 0 6px" title="Breaking Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70210&seasonId=2012" class="flexpop" instance="_ppc">@Ten</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909010_17 onFieldNotch">&raquo;</span> <a class="gamestatus_320909010_17" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909010" target="_blank">W 34-13</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">21</td><td class="playertableStat ">125</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">27</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">23.2</td></tr><tr id="plyr11298" class="pncPlayerRow playerTableBgRow1"><td id="slot_11298" class="slot_3 playerSlot" style="font-weight: bold;">RB/WR</td><td class="playertablePlayerName" id="playername_11298" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="11298" teamId="2" seasonId="2012" cache="true">Kevin Smith</a>, Det&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="11298" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_and_video.png" height="12" width="23" border="0" style="margin:0 6px 0 6px" title="Breaking News and Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70214&seasonId=2012" class="flexpop" instance="_ppc">StL</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909008_8 onFieldNotch">&raquo;</span> <a class="gamestatus_320909008_8" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909008" target="_blank">W 27-23</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">13</td><td class="playertableStat ">62</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">4</td><td class="playertableStat ">29</td><td class="playertableStat ">1</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">25.1</td></tr><tr id="plyr13982" class="pncPlayerRow playerTableBgRow0"><td id="slot_13982" class="slot_4 playerSlot" style="font-weight: bold;">WR</td><td class="playertablePlayerName" id="playername_13982" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="13982" teamId="2" seasonId="2012" cache="true">Julio Jones</a>, Atl&nbsp;WR<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="13982" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_recent.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Recent News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70312&seasonId=2012" class="flexpop" instance="_ppc">@KC</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909012_1 onFieldNotch">&raquo;</span> <a class="gamestatus_320909012_1" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909012" target="_blank">W 40-24</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">6</td><td class="playertableStat ">108</td><td class="playertableStat ">2</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">28.8</td></tr><tr id="plyr12586" class="pncPlayerRow playerTableBgRow1"><td id="slot_12586" class="slot_4 playerSlot" style="font-weight: bold;">WR</td><td class="playertablePlayerName" id="playername_12586" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="12586" teamId="2" seasonId="2012" cache="true">Hakeem Nicks</a>, NYG&nbsp;WR&nbsp;&nbsp;<span title="Probable" style="font-weight:bold;color: red;">P</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="12586" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_recent.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Recent News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70306&seasonId=2012" class="flexpop" instance="_ppc">Dal</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320905019_19 onFieldNotch">&raquo;</span> <a class="gamestatus_320905019_19" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320905019" target="_blank">L 17-24</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">4</td><td class="playertableStat ">38</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">7.8</td></tr><tr id="plyr13215" class="pncPlayerRow playerTableBgRow0"><td id="slot_13215" class="slot_4 playerSlot" style="font-weight: bold;">WR</td><td class="playertablePlayerName" id="playername_13215" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="13215" teamId="2" seasonId="2012" cache="true">Dez Bryant</a>, Dal&nbsp;WR<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="13215" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_recent.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Recent News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70319&seasonId=2012" class="flexpop" instance="_ppc">@NYG</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320905019_6 onFieldNotch">&raquo;</span> <a class="gamestatus_320905019_6" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320905019" target="_blank">W 24-17</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">4</td><td class="playertableStat ">85</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">12.5</td></tr><tr id="plyr14054" class="pncPlayerRow playerTableBgRow1"><td id="slot_14054" class="slot_6 playerSlot" style="font-weight: bold;">TE</td><td class="playertablePlayerName" id="playername_14054" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14054" teamId="2" seasonId="2012" cache="true">Kyle Rudolph</a>, Min&nbsp;TE<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14054" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=4&playerId=70430&seasonId=2012" class="flexpop" instance="_ppc">Jac</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909016_16 onFieldNotch">&raquo;</span> <a class="gamestatus_320909016_16" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909016" target="_blank">W 26-23</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">5</td><td class="playertableStat ">67</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">11.7</td></tr></table><table class="playerTableTable tableBody" cellpadding="0" cellspacing="1" border="0" id="playertable_5"><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">STARTERS: KICKERS</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="5">KICKING</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted Inside 40 Yards">1-39</span></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted 40-49 Yards">40-49</span></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted 50+ Yards">50+</span></td><td class="playertableStat"><span title="Field Goals Made / Field Goals Attempted">TOT</span></td><td class="playertableStat"><span title="Extra Points Made / Extra Points Attempted">XP</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr4333" class="pncPlayerRow playerTableBgRow0"><td id="slot_4333" class="slot_17 playerSlot" style="font-weight: bold;">K</td><td class="playertablePlayerName" id="playername_4333" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="4333" teamId="2" seasonId="2012" cache="true">Matt Bryant</a>, Atl&nbsp;K<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="4333" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=5&playerId=70512&seasonId=2012" class="flexpop" instance="_ppc">@KC</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909012_1 onFieldNotch">&raquo;</span> <a class="gamestatus_320909012_1" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909012" target="_blank">W 40-24</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">3/3</td><td class="playertableStat ">1/1</td><td class="playertableStat ">0/0</td><td class="playertableStat ">4/4</td><td class="playertableStat ">4/4</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">17</td></tr></table><table class="playerTableTable tableBody" cellpadding="0" cellspacing="1" border="0" id="playertable_6"><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">STARTERS: TEAM D/ST</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="6" width="225px">TEAM DEFENSE</th><td class="sectionLeadingSpacer"></td><th colspan="3">MISC</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Fumble or INT Return for TD">TD</span></td><td class="playertableStat"><span title="Each Interception">INT</span></td><td class="playertableStat"><span title="Each Fumble Recovered">FR</span></td><td class="playertableStat"><span title="Each Sack">SCK</span></td><td class="playertableStat"><span title="Each Safety">SFTY</span></td><td class="playertableStat"><span title="Points Allowed">PA</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Kickoff Return TD">KTD</span></td><td class="playertableStat"><span title="Punt Return TD">PRTD</span></td><td class="playertableStat"><span title="Blocked Punt, PAT or FG">BLK</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr60007" class="pncPlayerRow playerTableBgRow0"><td id="slot_60007" class="slot_16 playerSlot" style="font-weight: bold;">D/ST</td><td class="playertablePlayerName" id="playername_60007" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="60007" teamId="2" seasonId="2012" cache="true">Broncos D/ST</a>&nbsp;D/ST</td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=16&playerId=71623&seasonId=2012" class="flexpop" instance="_ppc">Pit</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909007_7 onFieldNotch defense">&raquo;</span> <a class="gamestatus_320909007_7" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909007" target="_blank">W 31-19</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">1</td><td class="playertableStat ">0</td><td class="playertableStat ">5</td><td class="playertableStat ">0</td><td class="playertableStat ">19</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">13</td></tr></table><div class="boxscoreDangler"><div class="danglerBox totalScore"title="202.36"id="tmTotalPts_1">202.4</div>TOTAL POINTS: </div><table class="playerTableTable tableBody hideableGroup" cellpadding="0" cellspacing="1" border="0" id="playertable_7" style="display:none;"><tr class="playerTableBgRowSubhead tableSubHead playertableSectionHeader"><th colspan="2" class="playertableSectionHeaderFirst">BENCH: OFFENSIVE PLAYERS</th><th colspan="2">Wk 1</th><td class="sectionLeadingSpacer"></td><th colspan="4">PASSING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RUSHING</th><td class="sectionLeadingSpacer"></td><th colspan="3">RECEIVING</th><td class="sectionLeadingSpacer"></td><th colspan="3">MISC</th><td class="sectionLeadingSpacer"></td><th colspan="1">TOTAL</th></tr><tr class="playerTableBgRowSubhead2 tableSubHead"><td>SLOT</td><td>PLAYER, TEAM POS</td><td title="Opponent">OPP</td><td title="Game Status">STATUS ET</td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each Pass Completed">C</span>/<span title="Each Pass Attempted">A</span></td><td class="playertableStat"><span title="Passing Yards">YDS</span></td><td class="playertableStat"><span title="TD Pass">TD</span></td><td class="playertableStat"><span title="Interceptions Thrown">INT</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Rushing Attempts">RUSH</span></td><td class="playertableStat"><span title="Rushing Yards">YDS</span></td><td class="playertableStat"><span title="TD Rush">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Each reception">REC</span></td><td class="playertableStat"><span title="Receiving Yards">YDS</span></td><td class="playertableStat"><span title="TD Reception">TD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat"><span title="Total 2pt Conversions">2PC</span></td><td class="playertableStat"><span title="Total Fumbles Lost">FUML</span></td><td class="playertableStat"><span title="Total Return TD">RTD</span></td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints" title="Fantasy Points">PTS</td></tr><tr id="plyr14907" class="pncPlayerRow playerTableBgRow0"><td id="slot_14907" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_14907" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14907" teamId="2" seasonId="2012" cache="true">Justin Blackmon</a>, Jac&nbsp;WR<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14907" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70316&seasonId=2012" class="flexpop" instance="_ppc">@Min</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909016_30 onFieldNotch">&raquo;</span> <a class="gamestatus_320909016_30" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909016" target="_blank">L 23-26</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">3</td><td class="playertableStat ">24</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">7.4</td></tr><tr id="plyr14874" class="pncPlayerRow playerTableBgRow1"><td id="slot_14874" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_14874" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14874" teamId="2" seasonId="2012" cache="true">Andrew Luck</a>, Ind&nbsp;QB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14874" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_and_video.png" height="12" width="23" border="0" style="margin:0 6px 0 6px" title="Breaking News and Video" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=1&playerId=70103&seasonId=2012" class="flexpop" instance="_ppc">@Chi</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909003_11 onFieldNotch">&raquo;</span> <a class="gamestatus_320909003_11" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909003" target="_blank">L 21-41</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">23/45</td><td class="playertableStat ">309</td><td class="playertableStat ">1</td><td class="playertableStat ">3</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">2</td><td class="playertableStat ">9</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">1</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">11.3</td></tr><tr id="plyr12503" class="pncPlayerRow playerTableBgRow0"><td id="slot_12503" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_12503" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="12503" teamId="2" seasonId="2012" cache="true">Rashad Jennings</a>, Jac&nbsp;RB&nbsp;&nbsp;<span title="Questionable" style="font-weight:bold;color: red;">Q</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="12503" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70216&seasonId=2012" class="flexpop" instance="_ppc">@Min</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909016_30 onFieldNotch">&raquo;</span> <a class="gamestatus_320909016_30" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909016" target="_blank">L 23-26</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">8</td><td class="playertableStat ">31</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">1</td><td class="playertableStat ">9</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">5</td></tr><tr id="plyr14052" class="pncPlayerRow playerTableBgRow1"><td id="slot_14052" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_14052" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14052" teamId="2" seasonId="2012" cache="true">Mikel Leshoure</a>, Det&nbsp;RB&nbsp;&nbsp;<span title="Suspended" style="font-weight:bold;color: red;">SSPD</span></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70214&seasonId=2012" class="flexpop" instance="_ppc">StL</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909008_8 onFieldNotch">&raquo;</span> <a class="gamestatus_320909008_8" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909008" target="_blank">W 27-23</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">0</td></tr><tr id="plyr12561" class="pncPlayerRow playerTableBgRow0"><td id="slot_12561" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_12561" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="12561" teamId="2" seasonId="2012" cache="true">Austin Collie</a>, Ind&nbsp;WR&nbsp;&nbsp;<span title="Questionable" style="font-weight:bold;color: red;">Q</span><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="12561" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=3&playerId=70303&seasonId=2012" class="flexpop" instance="_ppc">@Chi</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909003_11 onFieldNotch">&raquo;</span> <a class="gamestatus_320909003_11" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909003" target="_blank">L 21-41</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">0</td></tr><tr id="plyr14167" class="pncPlayerRow playerTableBgRow1"><td id="slot_14167" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_14167" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="14167" teamId="2" seasonId="2012" cache="true">Taiwan Jones</a>, Oak&nbsp;RB<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="14167" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70224&seasonId=2012" class="flexpop" instance="_ppc">SD</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320910013_13 onFieldNotch">&raquo;</span> <a class="gamestatus_320910013_13" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320910013" target="_blank">L 14-22</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">0</td></tr><tr id="plyr10475" class="pncPlayerRow playerTableBgRow0"><td id="slot_10475" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_10475" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="10475" teamId="2" seasonId="2012" cache="true">Greg Olsen</a>, Car&nbsp;TE<a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="1" leagueId="1032293" playerId="10475" teamId="2" seasonId="2012" cache="true"><img src="http://g.espncdn.com/s/ffllm/12/images/icons/sml/news_breaking.png" height="12" width="15" border="0" style="margin:0 6px 0 6px" title="Breaking News" /></a></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=4&playerId=70427&seasonId=2012" class="flexpop" instance="_ppc">@TB</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909027_29 onFieldNotch">&raquo;</span> <a class="gamestatus_320909027_29" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909027" target="_blank">L 10-16</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">6</td><td class="playertableStat ">56</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">11.6</td></tr><tr id="plyr13205" class="pncPlayerRow playerTableBgRow1"><td id="slot_13205" class="slot_20 playerSlot" style="font-weight: bold;">Bench</td><td class="playertablePlayerName" id="playername_13205" style=""><a href="" class="flexpop" content="tabs#ppc" instance="_ppc" fpopHeight="357px" fpopWidth="490px" tab="null" leagueId="1032293" playerId="13205" teamId="2" seasonId="2012" cache="true">Jahvid Best</a>*, Det&nbsp;RB&nbsp;&nbsp;<span title="Out" style="font-weight:bold;color: red;">O</span></td><td><div><a href content="ajax#/ffl/format/pvopop/summary?leagueId=1032293&positionId=2&playerId=70214&seasonId=2012" class="flexpop" instance="_ppc">StL</a></div></td><td class="gameStatusDiv"><span class="gameNotch_320909008_8 onFieldNotch">&raquo;</span> <a class="gamestatus_320909008_8" href="http://sports-ak.espn.go.com/nfl/boxscore?gameId=320909008" target="_blank">W 27-23</a></td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0/0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="playertableStat ">0</td><td class="sectionLeadingSpacer"></td><td class="playertableStat appliedPoints appliedPointsProGameFinal">0</td></tr></table><div class="boxscoreDangler hideableGroup" style="display:none;"><div class="danglerBox" id="tmInactivePts_1">35.3</div>BENCH POINTS: </div><div class="playerTableShowHideGroupLink"><a href="#" onclick="togglePlayerTableHiddenGroups();return false;">Show Bench</a></div><div class="playerTableShowHideGroupLink" style="display:none"><a href="#" onclick="togglePlayerTableHiddenGroups();return false;">Hide Bench</a></div></div><div style="clear: both;"></div><table width="940px" cellpadding=0 cellspacing=0 border=0><tr valign=top><td width="710px"><div id="chatContainer" class="boxscoreChatContainer"><div class="smackboardTitle" style="height:20px;">The Team Malia at Langdon Algers Smack Board</div><table class="tableBody" id="chatTable" cellpadding="0" cellspacing="0" width="100%"><tr><td id="chatDivCell"><div id="chatDiv" style="height: 180px;"><div id="connectingSpinner" style="display:none;"><img src="http://g.espncdn.com/s/ffllm/12/images/playerTableTabLoad.gif" /><span style="margin-left: 5px;"> Connecting ...</span></div></div></td></tr></table><div id="chatState">Idle</div><input type="text" autocomplete="off" class="select" id="chatInput" disabled="true" value="Please wait while the Smack Board loads..." /><div id="chatSubmitDiv"><a id="chatSubmitButton" class="chatSubmitButtonEnabled" onclick="return false;" href="#"></a></div></div><div style="clear:both; padding-left:12px;margin-top:15px;">&nbsp;</div><span id="chatSwf"></span><br clear="all" />
+<script type="text/javascript" src="http://g.espncdn.com/ffl/static/js/chatter?v=16"></script>
+
+<script type="text/javascript">
+
+var chat = new Chat({userId:20595722,memberId:20595722,memberName:escape("Andrew Gallant")}, 240, {chatEl: document.getElementById('chatDiv'),chatStateEl: document.getElementById('chatState'),inputEl: document.getElementById('chatInput'),joinedUsersEl: document.getElementById('chatUsers'),userCountEl: document.getElementById('currentUserCount'),submitButton: document.getElementById('chatSubmitButton')}, function() { chat.setSession("fDEwMzIyOTN8MnwxfDIwMTIxfDB8cA==", {sessionName:escape("The Team Malia at Langdon Algers Smack Board"), routeCode:"1032293", filterMessages:false}); });
+if(!swfobject.hasFlashPlayerVersion("9.0.0")) {
+	jQuery('#chatDiv').html('Flash 9 required.  <a href="http://www.adobe.com/products/flashplayer/">Click here</a> to download the free Flash player.');
+} else {
+	jQuery(document).ready(function() {
+		
+
+var chatAttributes = {
+	id: "FlexChat",
+	name: "FlexChat"
+};
+
+var chatParams = {
+	allowScriptAccess: "always"
+};
+
+var chatFlashvars = {
+	socketHost: "fantasychat.espn.go.com",
+	socketPort: 8080,
+	httpBaseUrl: escape("http://fantasychat.espn.go.com/league-"),
+
+	onStateChange: 'chat.onStateChange',
+	onUserJoined: 'chat.onUserJoined',
+	onUserLeft: 'chat.onUserLeft',
+	onMessageReceived: 'chat.onMessageReceived',
+	onReadyState: 'chat.onReadyState',
+	useOpsHack: false,
+	autoJoin: false,
+	hidden: true,
+	debug: false
+};
+
+swfobject.embedSWF("http://games-ak.espn.go.com/s/lm/swf/FlexChat-030811.swf?rand=195560", "chatSwf", "1", "1", "9.0.0", false, chatFlashvars, chatParams, chatAttributes, chat.swfLoaded.bindf(chat));
+	});
+	
+}
+</script></td><td>&nbsp;</td>
+<td width="220px" style="vertical-align:top;">
+<div style="margin-top: 42px;"><div id="poll2012_1032293_2_1001002" style="border: 1px  solid #dddddd;padding:6px;background-color:#efefef;;margin-left:0px;margin-bottom:0px;overflow:hidden;" class="tableBody">
+<b>Who will win this matchup?</b><br /><form name="frmPoll2012_1032293_2_1001002"><div id="poll2012_1032293_2_1001002_body" style="position:relative;display:block;margin-top:16px;"></div>
+<script type="text/javascript"> 
+p2012_1032293_2_1001002 = new Poll({ pollCode: "2012_1032293_2_1001002", isTeamVoting: false, isPassive: false, isAllowedToVote: false, maxBarWidth: 160, responseUrl: '/ffl/tools/pollvote?leagueId=1032293&typeId=2&topicId=1001002&response=', options: new Array('Team Malia', 'Langdon Algers'), votes: new Array(2, 1), pollResponse: new PollResponse(1, "Sep 4") }); 
+</script> 
+</div>
+</form>
+
+</div></td></tr>
+</table>
+<br /><br><div style="padding: 3px;" class="bodyCopy">
+<span class="note"><b>Note:</b> Live statistics during gamedays are subject to change and should be considered unofficial. Live scoring and Smack Boards require the most recent version of Flash to be installed and javascript to be enabled in your browser.</span>
+</div>
+<div class="games-footercol"><div class="faqft_bg"><div class="faqft_header"><a href="/ffl/content?page=fflrulesindex2012" target="_blank"><div class="faqft_hdimage_fh"></div></a><div id="faqft_moreless_btn" class="games-external-btn faqft_moreless_btn" onclick="showHideFAQs();">Expand Help Topics+</div><div class="faqft_hdimage_hl"></div></div><div id="faq_qlinks" class="faq_qlinks"style="display:none;"><ul><li><a href="" class="flexpop" content="ajax#/ffl/resources/help/faq?name=how-do-playoff-tiebreakers-work&popup=true" cache="true" instance="_faq">How do playoff tie breakers work?</a></li></ul><ul><li><a href="" class="flexpop" content="ajax#/ffl/resources/help/faq?name=why-are-some-stats-missing-or-incorrect&popup=true" cache="true" instance="_faq">Why are some stats missing or incorrect?</a></li></ul></ul><div class="clear"></div><div class="faqft_ft"><img src="http://games-ak.espn.go.com/s/lm/images/arrow.jpg"><a style="text-decoration:none;" href="/ffl/content?page=fflrulesfaq2012" target="_blank">MORE FAQ'S</a></div></div></div>
+<script type="text/javascript">
+function showHideFAQs() {
+	if (jQuery('#faq_qlinks').is(':visible')) {	
+		jQuery('#faq_qlinks').hide();
+		jQuery("#faqft_moreless_btn").html("Expand Help Topics +");
+	} else { 
+		jQuery('#faq_qlinks').show(); 
+		jQuery("#faqft_moreless_btn").html("Collapse Help Topics -");
+	}
+}
+</script><div style="margin:25px 0px 0px 0px;"><script type="text/javascript">adsonar_placementId=1508426;adsonar_pid=2187771;adsonar_ps=-1;adsonar_zw=956;adsonar_zh=150;adsonar_jv='ads.espn.adsonar.com';</script><script language="JavaScript" src="http://js.adsonar.com/js/adsonar.js"></script></div></div></div>
+<br><br>
+</div>
+</div>
+</div>
+<!-- ////////// start: Transitional Footer ////////// -->
+<!--start transitional elements wrapper -->
+<div class="transitional-elements">
+<!--[if IE 6]><div class="ie6"><![endif]-->
+<!--[if IE 7]><div class="ie7"><![endif]-->
+<!--[if IE 8]><div class="ie8"><![endif]-->
+<div id="trans-footer" class="container">
+<p><strong><a href="http://www.espn.com">ESPN.com</a></strong>  |  <a href="https://r.espn.go.com/espn/memberServices">Member Services</a> | <a href="http://games.espn.go.com/frontpage">Fantasy Games</a> | <a href="http://games.espn.go.com/ffl/content?page=fflrulesindex2012">Help</a> | <a href="http://preferences.truste.com/2.0/?type=espn&affiliateId=148" onclick="window.open('http://preferences.truste.com/2.0/?type=espn&affiliateId=148','popup','width=986,height=878,scrollbars=yes,resizable=no,toolbar=no,directories=no,location=no,menubar=no,status=no,left=0,top=0'); return false">Interest-Based Ads</a> | <a href="http://games.espn.go.com/ffl/feedback">Give Us Your Feedback</a></p>
+	
+<p>Call <strong>1-888-549-ESPN</strong> for help on all things Fantasy</p>
+
+<p>Copyright &copy;2012 ESPN Internet Ventures. <a href="http://disney.go.com/corporate/legal/terms.html">Terms of Use</a> and <a href="http://disney.go.com/corporate/privacy/pp_espn.html">Privacy Policy and Safety Information/Your California Privacy Rights</a> are applicable to this site.<br><br>Officially Licensed Product of NFL PLAYERS. Visit <a href="http://www.nflplayers.com" target="new">www.nflplayers.com</a>.</p>
+</div>
+<!-- end transitional elements wrapper -->
+<!--[if lte IE 8]></div><![endif]-->
+</div>
+<!-- ////////// end: Transitional Footer ////////// -->
+</div>
+<div id="nav-wrapper" class="container">
+<div id="nav-wrapper-container">
+<div id="nav-main">
+<!-- begin site nav -->
+<ul id="nav-main-list" class="top">
+	<!-- start: Menuitem :: MyTAB -->
+	<li id="menu-myespn" class="last myespn">
+		<a class="myespn" ref="#">MyESPN</a>
+	</li>
+	<!-- start: Menuitem :: NFL -->
+	<li id="menu-nfl" class="sport-menu default t-nfl" data-sportid="28">
+		<a href="http://espn.go.com/nfl/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_nfl">NFL</a>
+	</li>
+	<!-- start: Menuitem :: MLB -->
+	<li id="menu-mlb" class="sport-menu default t-mlb" data-sportid="10">
+		<a href="http://espn.go.com/mlb/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_mlb">MLB</a>
+	</li>
+	<!-- start: Menuitem :: NBA -->
+	<li id="menu-nba" class="sport-menu default t-nba" data-sportid="46">
+		<a href="http://espn.go.com/nba/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_nba">NBA</a>
+	</li>
+	<!-- start: Menuitem :: NHL -->
+	<li id="menu-nhl" class="sport-menu default t-nhl" data-sportid="90">
+		<a href="http://espn.go.com/nhl/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_nhl">NHL</a>
+	</li>
+	<!-- start: Menuitem :: NCAA FB -->
+	<li id="menu-ncf" class="sport-menu default t-ncf" data-sportid="23">
+		<a href="http://espn.go.com/college-football/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_ncf">NCAA FB</a>
+	</li>
+	<!-- start: Menuitem :: NCAA BB -->
+	<li id="menu-ncb" class="sport-menu default t-ncb" data-sportid="41">
+		<a href="http://espn.go.com/mens-college-basketball/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_ncb">NCAA BB</a>
+	</li>
+	<!-- start: Menuitem :: NASCAR -->
+	<li id="menu-nascar" class="sport-menu default t-nascar" data-sportid="2020">
+		<a href="http://espn.go.com/racing/nascar/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_nascar">NASCAR</a>
+	</li>
+	<!-- start: Menuitem :: SOCCER -->
+	<li id="menu-soccer" class="sport-menu default t-soccer" data-sportid="600">
+		<a href="http://espn.go.com/sports/soccer/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_soccer">SOCCER</a>
+	</li>
+	<!-- start: Menuitem :: GOLF -->
+	<li id="menu-golf" class="sport-menu t-golf" data-sportid="1106" style="display: none;">
+		<a href="http://espn.go.com/golf/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_golfl">GOLF</a>
+	</li>
+	<!-- start: Menuitem :: TENNIS -->
+	<li id="menu-tennis" class="sport-menu t-tennis" data-sportid="850" style="display: none;">
+		<a href="http://espn.go.com/tennis/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_tennis">TENNIS</a>
+	</li>
+	<!-- start: Menuitem :: BOXING-->
+	<li id="menu-boxing" class="sport-menu t-boxing" data-sportid="1000" style="display: none;">
+		<a href="http://espn.go.com/boxing/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_boxing">BOXING</a>
+	</li>
+	<!-- start: Menuitem :: MMA -->
+	<li id="menu-mma" class="sport-menu t-mma" data-sportid="3301" style="display: none;">
+		<a href="http://espn.go.com/mma/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_mma">MMA</a>
+	</li>
+	<!-- start: Menuitem :: ALL SPORTS -->
+	<li id="menu-allsports" class="nav-allsports t-allsports">
+		<a href="http://espn.go.com/sports/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_allsports">MORE SPORTS</a>
+	</li>
+	<!-- start: Menuitem :: INSIDER -->
+	<li id="menu-insider" class="sport-menu t-insider" style="display: none;">
+		<a href="http://insider.espn.go.com/insider/index" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_insider">INSIDER</a>
+	</li>
+	<!-- start: Menuitem :: SPORTSNATION -->
+	<li id="menu-sportsnation" class="sport-menu t-sportsnation" style="display: none;">
+		<a href="http://espn.go.com/sportsnation/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_sportsnation">SN</a>
+	</li>
+	<!-- start: Menuitem :: RADIO & MORE -->
+	<li id="menu-radio" class="right-menu two-line last t-radio">
+	<a href="http://espn.go.com/espnradio/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_radioandmore">RADIO<span>& MORE</span></a>
+	</li>
+	<!-- start: Menuitem :: espnW & PLAYBOOK -->
+	<li id="menu-page2" class="right-menu two-line t-page2">
+	<a href="http://espn.go.com/espnw/" name="&lpos=sitenavdefault&lid=sitenav_espnwandplaybook" target="_blank">espnW<span>& PLAYBOOK</span></a>
+	</li>
+	<!-- start: Menuitem :: FANTASY & GAMES -->
+	<li id="menu-fantasy" class="right-menu two-line t-fantasy selected">
+		<a href="http://games.espn.go.com/frontpage" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_fantasy">FANTASY<span>& GAMES</span></a>
+	</li>
+	<!-- start: Menuitem :: WATCH -->
+	<li id="menu-watch" class="right-menu t-watch">
+		<a href="http://espn.go.com/video/" name="&amp;lpos=sitenavdefault&amp;lid=sitenav_watch">WATCH</a>
+	</li>
+</ul>
+<!-- end site nav --></div>
+<div class="nav-main-secondary">
+<ul>
+<div class="nav-main-secondary"><ul><div class="nav-main-secondary">
+<ul>
+<li class="subnav-frontpage"><a href="http://games.espn.go.com/frontpage/football">Fantasy Football</a></li>
+<!--<li class="subnav-create"><a href="http://games.espn.go.com/ffl/welcome">Create or Join a League</a></li>
+<li class="subnav-draftkit"><a href="http://games.espn.go.com/frontpage/ffldraftkit">Draft Kit</a></li>-->
+<li class="subnav-tools-projections-sortable"><a href="http://games.espn.go.com/ffl/tools/projections?leagueId=1032293">Projections</a></li>
+<li><a href="http://games.espn.go.com/frontpage/fantasyRankings">Weekly Rankings</a></li>
+<li class="subnav-addeddropped"><a href="http://games.espn.go.com/ffl/addeddropped">Added/Dropped</a></li>
+<li class="subnav-resources-playernews"><a href="http://games.espn.go.com/ffl/resources/playernews">Player News</a></li>
+<li class="subnav-scoring"><a href="http://games.espn.go.com/ffl/leaders">Scoring Leaders</a></li>
+<li class="subnav-corrections"><a href="http://games.espn.go.com/ffl/tools/statcorrections">Stat Corrections</a></li>
+<li class="subnav-rules"><a href="http://games.espn.go.com/ffl/content?page=fflrulesindex2012">Rules</a></li> 
+<li class="subnav-forum"><a href="http://games.espn.go.com/frontpage/forums#!/category/1313609200-908-35">Forums</a></li>
+<li class="expandable"><a href="javascript:void(0);"><span>More</span></a>   
+<div>
+<dl style="border:none;">
+<dd><a href="http://itunes.apple.com/us/app/espn-fantasy-football-2012/id389073226?mt=8">Fantasy Football iTunes app</a></dd>
+<dd><a href="https://play.google.com/store/apps/details?id=com.espn.espnfantasyfootball&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5lc3BuLmVzcG5mYW50YXN5Zm9vdGJhbGwiXQ">Fantasy Football Android app</a></dd>
+<dd><a href="http://itunes.apple.com/us/app/espn-fantasy-football-2012/id555376968?ls=1&mt=8">Fantasy Football iPad app</a></dd>
+<dd><a href="http://games.espn.go.com/ffl/livedraftresults">Average Draft Position</a></dd>
+<dd><a href="http://games.espn.go.com/frontpage/ffldraftkit">Draft Kit</a></dd>
+<dd><a href="http://games.espn.go.com/ffl/livedraftlobby">Live Draft Lobby</a></dd>
+<dd><a href="http://games.espn.go.com/ffl/resources/leaderboard?leaderboardGroupId=0">Leaderboards</a></dd>
+
+<dd><a href="http://games.espn.go.com/ffl/tools/undroppables">Undroppables</a></dd>
+<!--<dd><a href="http://games.espn.go.com/ffl/leaders">Scoring Leaders</a></dd>-->
+<dd><a href="http://games.espn.go.com/ffl/pointsagainst">Points Against</a></dd>
+<dd><a href="http://insider.espn.go.com/insider/fantasy/football/valuecalculator">Custom Dollar Value Generator<img width="8" height="9" style="margin-left:3px;" alt="Insider" src="http://a.espncdn.com/i/design07/mast/tinyin.gif" /></a></dd>
+<dd><a href="http://games.espn.go.com/ffl/content?page=fflrulesfaq2012">FAQ</a></dd>
+<dd><a href="http://insider.espn.go.com/fantasy/football/ffl/story?page=goallinegrid">Goal-Line Grid <img width="8" height="9" style="margin-left:3px;" alt="Insider" src="http://a.espncdn.com/i/design07/mast/tinyin.gif" /></a></dd>
+<dd><a href="http://insider.espn.go.com/insider/fantasy/answerguys/index">Answer Guys <img width="8" height="9" style="margin-left:3px;" alt="Insider" src="http://a.espncdn.com/i/design07/mast/tinyin.gif" /></a></dd>
+</dl>  
+</div> 
+</li> 
+</ul>
+</div>
+</ul></div></ul>
+</div>
+<script>espn.core.init.nav();</script>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td></tr></table>
+</div>
+
+
+
+<!-- SiteCatalyst code version: H.21.3 Copyright 1997-2010 Omniture, Inc. http://www.omniture.com -->
+<script type="text/javascript">
+	var s_account="wdgespfantasy";
+	var omniPageName = "fantasy:football:ffl:boxscorefull";
+	
+	var insiderStatus = "",
+	anGen = "",
+	anYear = "",
+	anDateString = "",
+	anLoginStatus = "",
+	undef = 'undefined',
+	callOmniture = function(){
+		if (typeof anCV != "undefined"){anParseLoginBarInfo(anCV);}
+		s_omni.pageName="football:ffl:boxscorefull";
+		s_omni.server = window.location.host; // Server from the Host
+		s_omni.channel = "football";
+		s_omni.prop1 = "fantasy";
+		s_omni.prop4 = "game-lm-free-custom";
+		s_omni.prop5 = "football:ffl";
+		s_omni.prop11 = (insiderStatus !== null) ? insiderStatus + ":premium-no" : "premium-no";
+		s_omni.prop17 = "en";
+		s_omni.prop21 = anDateString;
+		s_omni.prop22 = anGen;
+		s_omni.prop25 = "football";
+		s_omni.prop29 = anLoginStatus;
+		s_omni.prop30 = "n";
+		s_omni.hier1 = "football:ffl:boxscorefull";
+		s_omni.eVar7 = anYear + ":" + anGen + ":" + anLoginStatus + ":" + s_omni.prop11 + ":";
+		s_omni.eVar9 = "en";
+		s_omni.eVar13 = "football:ffl:boxscorefull";
+		s_omni.eVar19 = "football";
+		
+		if (s_omni.prop11=="anonymous:premium-yes" || s_omni.prop11=="insider-no:premium-yes" && typeof s_omni.prop4!="undefined" &&
+			(s_omni.prop4=="story" || s_omni.prop4=="blog")) {
+			if (typeof s_omni.events != "undefined" && s_omni.events!="") {
+				s_omni.events = s_omni.events+",event8" }
+			else { s_omni.events="event8" }
+		}
+		anDebugCase = "ver_15Feb11_0_";
+		/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+		var s_code=s_omni.t();
+		if(s_code) {
+			//document.write(s_code);
+			jQuery('body').append(s_code);
+		}
+	};
+	
+
+
+	jQuery(function($) {
+		// we want to load the analytics files from the cache if possible - so, let's use full $.ajax() calls
+		$.ajax({
+			type:'GET',
+			url: 'http://a.espncdn.com/combiner/c?js=analytics/sOmni.js,analytics/analytics.js,analytics/zf.js,analytics/externalnielsen.js',
+			dataType: 'script',
+			cache: true,
+			success: function() {
+				var lgSrc;
+				if(typeof anCV !== undef && anCV === '' && document.getElementById('form-memberarea') != null) {
+					lgSrc = ('https:' === document.location.protocol) ? 'https://r.espn.go.com/members/util/getUserInfo?cb=runOmnitureIndependently' : 'http://sports.espn.go.com/espn/js/uniloginInLineReplace?cb=runOmnitureIndependently';
+					$.getScript(lgSrc); // we don't want this to be cached - so we'll use the $.getScript() method
+				} else {
+					callOmniture();
+				}
+			}
+		});
+	});
+
+</script>
+<!-- End SiteCatalyst code version: H.21. --></body>
+</html>
