@@ -1,0 +1,159 @@
+THIS IS NOT READY FOR PUBLIC CONSUMPTION YET. I'VE POSTED IT FOR REFERENCE
+PURPOSES ONLY. I HOPE TO MAKE THIS MORE AMENABLE TO END USERS AT SOME POINT.
+AT THIS POINT IN TIME, THIS IS ONLY ACCESSIBLE TO PROGRAMMERS, FOR SOME 
+DEFINITION OF 'ACCESSIBLE'.
+
+I have no intention of testing this on Windows or Mac. If it accidentally 
+works on either of those platforms, color me happy.
+
+
+About
+=====
+fanfoot is a package designed to do two things: 1) Download roster and
+matchup data from a fantasy league (currently supported: Yahoo and ESPN).
+2) Provide a command line interface to view that data and provide computed 
+scores and alerts.
+
+It all works by using a SQLite database to store the data. (SQLite is used
+primarily for its support of concurrent read and write access, and not
+necessarily for relational storage.) There are a couple update scripts that
+use YQL to grab data from Yahoo leagues and BeautifulSoup to grab data from
+ESPN leagues (that must be public, currently). There are also a bunch of
+scripts that allow different views of that data.
+
+The central idea is to run scripts like 'fan-upleagues' and 'fan-upstatus'
+every so often (maybe every 30 minutes and once a day, respectively) which 
+*update* the SQLite database, and run scripts like 'fan-alert' during game time 
+to send alerts.
+
+Here are some ideas of what I'm working on (or would like to work on):
+
+- An alert system that uses nflgame.live and nflgame.alert to send text
+  messages whenever a player on your team or your opponent's team scores a 
+  touchdown. (Or theoretically, any statistic that goes up. But that will 
+  probably be a bit too much.)
+
+- A program that automatically prints every play happening live, and highlights 
+  plays that involve a player on one of your teams.
+
+- Cache maximum player statistics (that is, a combination of game and 
+  play-by-play player data) in the SQLite database, so that viewing the data 
+  is instantaneous. (The bottleneck here is deriving cumulative data from all 
+  of the play-by-play data.) This change will likely have some design 
+  implications on the current state of affairs. I probably won't do this unless 
+  performance becomes a problem.
+
+- Provide a simple web interface to view the data. (And I do mean very simple. 
+  I'm thinking a stupid PHP script to run the commands and print the data in 
+  tables. I'm not really motivated enough to do anything more.)
+
+
+Dependencies
+============
+nflgame
+
+For determining games that are currently being played
+-----------------------------------------------------
+pytz (optional dependency of nflgame; necessary for fanfoot)
+
+For sending text message alerts with Google Voice
+-------------------------------------------------
+pygooglevoice (optional dependency of nflgame and fanfoot)
+
+For downloading league data
+---------------------------
+BeautifulSoup 4
+yql (which requires httplib2 and oauth2)
+httplib2 (dependency of yql; installed automatically if using PyPI)
+oauth2 (dependency of yql; installed automatically if using PyPI)
+
+
+Installation
+============
+Right now, you'll have to clone the repository and add the directory containing 
+the repository to your PYTHONPATH environment variable. Then add the 'bin' 
+directory to your PATH.
+
+
+Configuration
+=============
+This package needs to be told some information about each of your leagues. This 
+minimally includes where your league is hosted (currently supported: 'yahoo' 
+and 'espn'), the league key (see below), the year of the season (e.g., 2012) 
+and a label that can be anything you choose. (i.e., "keeper", "pro", "work", 
+etc.")
+
+All of these values are specified in 'fanfoot/config.ini'. The label goes in 
+the square brackets ('[' and ']'), and the 'kind', 'season' and 'key' follow 
+that.
+
+Finally, and optionally, you may specify scoring settings specific to your 
+league. You only need to specify scoring settings that are different from 
+standard Yahoo league settings. (See the "Scoring" section below for more info 
+on what kinds of options are available.)
+
+League keys
+-----------
+League keys are typically numeric (or close to) identifiers for your league. 
+The format of these league keys vary depending upon who is hosting your league. 
+For example, on Yahoo, one of my league's keys is "273.l.104464" while the 
+league key for my ESPN league is "10332293".
+
+Yahoo keys can be found by concatenating a special season numeric code (273 is 
+for the 2012 season, but it changes every year), the letter 'l' (lowercase 
+  'L'), and a numeric league identifier that can be found at the end of your 
+league's homepage URL. (i.e., the '104464' in 
+'http://football.fantasysports.yahoo.com/f1/104464'.) So that the final league 
+key for this league is "273.l.104464".
+
+ESPN keys can be found in their entirety at the end of your league's homepage 
+URL. (i.e., the '1032293' in 
+'http://games.espn.go.com/ffl/leagueoffice?leagueId=1032293&seasonId=2012'.) So 
+that the final league key for this league is "10332293".  Note that currently, 
+your ESPN league must be public. (I probably won't add support for private ESPN 
+leagues until I'm in one, so feel free to submit a patch/pull request.)
+
+Scoring
+-------
+The scoring system is not extremely robust at the moment, but it should be 
+enough to make one dangerous. I've devised the fields from a very small sample 
+size (four leagues; two are Yahoo standard scoring, one is half-PPR with some 
+penalties for missed fields goals and one is an ESPN PPR with 6 point PTDs), so 
+it's very likely that they aren't fine-grained enough or are not exhaustive.
+
+Also, I don't have a list of fields supported in plain text anywhere, but you 
+can find them at the top of 'fanfoot/scoring.py'. Every field can be overridden 
+in 'fanfoot/config.ini'.
+
+Finally, this module is at the mercy of NFL.com's GameCenter data. And it has 
+errors. They aren't exactly rare, but I'd say they are uncommon. There are 
+some heuristics used in nflgame to mitigate errors, but it isn't perfect (and 
+it never will be). The upside here is that scoring isn't necessary for some of 
+the cooler features of fanfoot, like text alerts. (Which just looks at 
+touchdowns, independent of the scoring system.)
+
+
+YQL Configuration
+=================
+If you're trying to add Yahoo league data, you'll need to configure YQL---which 
+is a SQL-like language used to query personal data associated with your Yahoo 
+account. It can be a bit of a pain to setup, but you only need to do it once 
+(and it will work for future seasons and any number of leagues).
+
+First, you'll need a Yahoo Developer account (which is free). You should be 
+able to sign up for one here: https://developer.apps.yahoo.com --- Make sure to 
+use the Yahoo account that you use for your leagues. When you have an account, 
+create a new project. When creating a project, make sure you check either 
+"Read" or "Read/Write" privileges for "Fantasy Sports". (This package doesn't 
+need "Write" privileges, so you may safely check "Read".)
+
+Second, you'll need to tell fanfoot what your key information is. In the 
+fanfoot directory, there is a file called 'yql-sample.ini'. Rename that to 
+'yql.ini'. Now open it in your favorite text editor and fill in the 
+information. (The 'secret' and 'key' fields can be found on your project page 
+in your Yahoo Developer account. The 'storage_key' field can be any random 
+string that doesn't contain any '#' or ';' characters.) Since this file 
+contains sensitive information, I recommend that you protect it in some way. 
+(Make it owner readable/writable only on civilized operating systems, i.e., 
+'chmod 600 fanfoot/yql.ini'.)
+
