@@ -1,12 +1,11 @@
 import ConfigParser
-import json
 import os
 import os.path
 
 import yql
 import yql.storage
 
-import fantasy
+import fanfoot
 
 yqlconn = None
 
@@ -15,7 +14,7 @@ token_store = None
 def connect():
     global yqlconn, token_store
 
-    _cache_dir = os.path.join(fantasy.cur_dir, '.cache')
+    _cache_dir = os.path.join(fanfoot.cur_dir, '.cache')
     _config = get_yql_config()
 
     _key = _config['key']
@@ -52,7 +51,7 @@ def yqlquery(sql):
 
 def get_yql_config(config_path=None):
     if config_path is None:
-        config_path = os.path.join(fantasy.cur_dir, 'yql.ini')
+        config_path = os.path.join(fanfoot.cur_dir, 'yql.ini')
 
     config = ConfigParser.RawConfigParser()
     config.readfp(open(config_path))

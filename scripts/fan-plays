@@ -7,7 +7,7 @@ from termcolor import colored
 
 import nflgame.live
 
-import fantasy
+import fanfoot
 
 parser = argparse.ArgumentParser(
     description='Watch live games and echo plays involving one of your '
@@ -23,7 +23,7 @@ aa('league_teams', type=str, nargs='+',
 conf = parser.parse_args()
 
 
-db = fantasy.db()
+db = fanfoot.db()
 cur_week = db.get_week()
 
 tracking = []
@@ -35,7 +35,7 @@ for league_team in conf.league_teams:
         sys.exit(1)
 
     try:
-        lgconf = fantasy.find(league_label)
+        lgconf = fanfoot.find(league_label)
     except KeyError:
         print >> sys.stderr, 'Could not find league with label "%s".' \
                              % league_label

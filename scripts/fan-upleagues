@@ -9,9 +9,9 @@ from bs4 import BeautifulSoup
 
 import nflgame.live
 
-import fantasy
-import fantasy.ffyql
-import fantasy.league
+import fanfoot
+import fanfoot.ffyql
+import fanfoot.league
 
 parser = argparse.ArgumentParser(
     description='Update the league information (rosters and matchups) for a '
@@ -65,7 +65,7 @@ def eprint(s):
 
 
 def load_yahoo_rosters(conn, lgconf, week):
-    cursor = fantasy.ffyql.yqlquery('''
+    cursor = fanfoot.ffyql.yqlquery('''
         SELECT * FROM fantasysports.teams.roster
         WHERE league_key = '%s' AND week = %d
     ''' % (lgconf.key, week))
@@ -95,7 +95,7 @@ def load_yahoo_rosters(conn, lgconf, week):
     conn.commit()
 
 def load_yahoo_matchups(conn, lgconf, week):
-    cursor = fantasy.ffyql.yqlquery('''
+    cursor = fanfoot.ffyql.yqlquery('''
         SELECT * FROM fantasysports.leagues.scoreboard
         WHERE league_key = '%s' AND week = %d
     ''' % (lgconf.key, week))
@@ -221,8 +221,8 @@ def nouni(text):
     return ''.join(text)
 
 if __name__ == '__main__':
-    fantasy.ffyql.connect()
-    conn = fantasy.league.Conn()
+    fanfoot.ffyql.connect()
+    conn = fanfoot.league.Conn()
 
     if conf.all:
         _, cur_week = nflgame.live.current_year_and_week()
@@ -235,7 +235,7 @@ if __name__ == '__main__':
         rng = xrange(cur_week, cur_week + 1)
 
     for week in rng:
-        for lgconf in fantasy.leagues().itervalues():
+        for lgconf in fanfoot.leagues().itervalues():
             eprint('Loading %s, week %d' % (lgconf.label, week))
             if lgconf.kind == 'yahoo':
                 load_yahoo_rosters(conn, lgconf, week)

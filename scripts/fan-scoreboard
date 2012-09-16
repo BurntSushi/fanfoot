@@ -5,7 +5,7 @@ import sys
 
 import nflgame
 
-import fantasy
+import fanfoot
 
 parser = argparse.ArgumentParser(
     description='View the scoreboard for a week in a league.',
@@ -18,8 +18,8 @@ aa('week', nargs='?', type=int,
    help='The week number. Defaults to the current week.')
 conf = parser.parse_args()
 
-lgconf = fantasy.find(conf.league_label)
-db = fantasy.db()
+lgconf = fanfoot.find(conf.league_label)
+db = fanfoot.db()
 
 if conf.week is None:
     conf.week = db.get_week()
@@ -32,7 +32,7 @@ if not matchups:
 
 # Preload all game data for each team.
 for team in [t[0] for t in nflgame.teams]:
-    fantasy.game_max_stats(2012, conf.week, team)
+    fanfoot.game_max_stats(2012, conf.week, team)
 
 table = []
 table.append(None)
@@ -43,5 +43,5 @@ for matchup in db.matchups(lgconf, conf.week):
     table.append([matchup.team1.name, '%0.2f' % s1])
     table.append([matchup.team2.name, '%0.2f' % s2])
     table.append(None)
-print fantasy.table(table)
+print fanfoot.table(table)
 

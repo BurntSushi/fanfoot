@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-import fantasy
+import fanfoot
 
 parser = argparse.ArgumentParser(
     description='View your fantasy league matchups for a particular week.',
@@ -16,8 +16,8 @@ aa('week', nargs='?', type=int,
    help='The week number. Defaults to the current week.')
 conf = parser.parse_args()
 
-lgconf = fantasy.find(conf.league_label)
-db = fantasy.db()
+lgconf = fanfoot.find(conf.league_label)
+db = fanfoot.db()
 
 if conf.week is None:
     conf.week = db.get_week()
@@ -31,5 +31,5 @@ if not matchups:
 table = []
 for matchup in db.matchups(lgconf, conf.week):
     table.append((matchup.team1.name, 'vs.', matchup.team2.name))
-print fantasy.table(table)
+print fanfoot.table(table)
 

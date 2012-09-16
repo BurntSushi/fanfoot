@@ -1,7 +1,7 @@
 import nflgame.player
 import nflgame.seq
 
-import fantasy
+import fanfoot
 
 _HEADERS = {
     'offense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
@@ -163,14 +163,14 @@ class Player (object):
         return newd
 
     def score(self):
-        return fantasy.scoring.score(self)
+        return fanfoot.scoring.score(self)
 
     def game(self):
-        return fantasy.game(int(self.lgconf.season), self.week, self.team)
+        return fanfoot.game(int(self.lgconf.season), self.week, self.team)
 
     def game_stats(self):
         year = int(self.lgconf.season)
-        maxstats = fantasy.game_max_stats(year, self.week, self.team)
+        maxstats = fanfoot.game_max_stats(year, self.week, self.team)
         if maxstats is None:
             return None
         return maxstats.playerid(self.player.playerid)
@@ -361,7 +361,7 @@ class DefensePlayer (Player):
     def players(self):
         game = self.game()
         year = int(self.lgconf.season)
-        maxstats = fantasy.game_max_stats(year, self.week, self.team)
+        maxstats = fanfoot.game_max_stats(year, self.week, self.team)
         if game is None or maxstats is None:
             return nflgame.seq.GenPlayerStats([])
 

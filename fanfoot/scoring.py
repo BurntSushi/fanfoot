@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-import fantasy
+import fanfoot
 
 _MAX_GAME_SCORE = 999.0
 
@@ -33,11 +33,11 @@ Config = namedtuple('Config', [f[0] for f in _default])
 default_conf = Config(**dict(_default))
 
 def score(player):
-    if isinstance(player, fantasy.player.OffensePlayer):
+    if isinstance(player, fanfoot.player.OffensePlayer):
         return _score_offense(player)
-    elif isinstance(player, fantasy.player.KickingPlayer):
+    elif isinstance(player, fanfoot.player.KickingPlayer):
         return _score_kicking(player)
-    elif isinstance(player, fantasy.player.DefensePlayer):
+    elif isinstance(player, fanfoot.player.DefensePlayer):
         return _score_defense(player)
 
     assert False, 'I do not know how to score %s players.' % type(player)
@@ -80,7 +80,7 @@ def _score_kicking(player):
         return None
 
     fgs = player.field_goals()
-    fg0, fg20, fg30, fg40, fg50 = fantasy.player.group_field_goals(fgs)
+    fg0, fg20, fg30, fg40, fg50 = fanfoot.player.group_field_goals(fgs)
 
     s = 0.0
 

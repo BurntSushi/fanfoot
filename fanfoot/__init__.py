@@ -4,8 +4,8 @@ import os.path
 
 import nflgame
 
-import fantasy.league
-import fantasy.scoring
+import fanfoot.league
+import fanfoot.scoring
 
 cur_dir = os.path.split(__file__)[0]
 
@@ -16,7 +16,7 @@ LeagueConfig = namedtuple('LeagueConfig',
                           ['label', 'kind', 'season', 'key', 'scoring'])
 
 def db(fpath=None):
-    return fantasy.league.Conn(fpath)
+    return fanfoot.league.Conn(fpath)
 
 def game(year, week, team):
     """
@@ -65,7 +65,7 @@ def leagues(config_path=None):
                                  kind=config.get(label, 'kind'),
                                  season=config.get(label, 'season'),
                                  key=config.get(label, 'key'),
-                                 scoring=fantasy.scoring.create_config(d))
+                                 scoring=fanfoot.scoring.create_config(d))
     return league_info
 
 def table(lst):

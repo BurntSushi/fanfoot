@@ -3,8 +3,8 @@ import os
 import os.path
 import sqlite3
 
-import fantasy
-import fantasy.player
+import fanfoot
+import fanfoot.player
 
 _sort_positions = {
     'QB': 1,
@@ -24,7 +24,7 @@ Matchup = namedtuple('Matchup', ['team1', 'team2'])
 class Conn (object):
     def __init__(self, fpath=None):
         if fpath is None:
-            fpath = os.path.join(fantasy.cur_dir, 'leagues.db')
+            fpath = os.path.join(fanfoot.cur_dir, 'leagues.db')
         if not os.access(fpath, os.R_OK):
             self.__conn = _new_db(fpath)
         else:
@@ -142,7 +142,7 @@ class Conn (object):
             if not bench and row['player_pos'] == 'BN':
                 continue
 
-            p = fantasy.player.create_player(
+            p = fanfoot.player.create_player(
                 lgconf=lgconf,
                 week=row['week'],
                 gsis_id=row['player_gsisid'],

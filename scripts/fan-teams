@@ -2,7 +2,7 @@
 
 import argparse
 
-import fantasy
+import fanfoot
 
 parser = argparse.ArgumentParser(
     description='View your fantasy league rosters and matchups.',
@@ -13,8 +13,8 @@ aa('league_label', type=str,
         'your config.ini file.')
 conf = parser.parse_args()
 
-lgconf = fantasy.find(conf.league_label)
-db = fantasy.db()
+lgconf = fanfoot.find(conf.league_label)
+db = fanfoot.db()
 
 for team in db.teams(lgconf):
     print '%s %s' % (str(team.id).ljust(3), team.name)

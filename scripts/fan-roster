@@ -3,8 +3,8 @@
 import argparse
 import sys
 
-import fantasy
-import fantasy.player
+import fanfoot
+import fanfoot.player
 
 parser = argparse.ArgumentParser(
     description='View your fantasy league team roster for a particular week.',
@@ -21,8 +21,8 @@ aa('--nostats', action='store_false',
    help='When set, stats will not be fetched and will be set to 0.')
 conf = parser.parse_args()
 
-lgconf = fantasy.find(conf.league_label)
-db = fantasy.db()
+lgconf = fanfoot.find(conf.league_label)
+db = fanfoot.db()
 
 team = db.find_team(lgconf, conf.team)
 if not team:
@@ -43,8 +43,8 @@ if not players:
     sys.exit(1)
 
 table = []
-groups = fantasy.player.group(players)
-headers = fantasy.player.highlight_headers()
+groups = fanfoot.player.group(players)
+headers = fanfoot.player.highlight_headers()
 total = 0.0
 for i, (group, header) in enumerate(zip(groups, headers)):
     table.append(header + ['Score'])
@@ -71,5 +71,5 @@ else:
     total_row[-1] = '%0.2f' % total
 table.append(total_row)
 
-print fantasy.table(table)
+print fanfoot.table(table)
 

@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-import fantasy
+import fanfoot
 
 parser = argparse.ArgumentParser(
     description='View your fantasy league matchups for the season '
@@ -16,8 +16,8 @@ aa('league_label', type=str,
 aa('team', type=str, help='The name of the team or the team id.')
 conf = parser.parse_args()
 
-lgconf = fantasy.find(conf.league_label)
-db = fantasy.db()
+lgconf = fanfoot.find(conf.league_label)
+db = fanfoot.db()
 
 team = db.find_team(lgconf, conf.team)
 if not team:
@@ -43,5 +43,5 @@ for matchup in matchups:
         table.append((matchup.team1.name, 'vs.', matchup.team2.name))
     else:
         table.append((matchup.team2.name, 'vs.', matchup.team1.name))
-print fantasy.table(table)
+print fanfoot.table(table)
 
