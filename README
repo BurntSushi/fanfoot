@@ -9,10 +9,9 @@ works on either of those platforms, color me happy.
 
 About
 =====
-fanfoot is a package designed to do two things: 1) Download roster and
-matchup data from a fantasy league (currently supported: Yahoo and ESPN).
-2) Provide a command line interface to view that data and provide computed 
-scores and alerts.
+fanfoot is a package designed to do two things: 1) Download roster and matchup 
+data from a fantasy league (only Yahoo and ESPN at the moment) and 2) provide a 
+command line interface to view that data, compute scores and send alerts.
 
 It all works by using a SQLite database to store the data. (SQLite is used
 primarily for its support of concurrent read and write access, and not
