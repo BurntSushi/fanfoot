@@ -12,11 +12,15 @@ aa = parser.add_argument
 aa('league_label', type=str,
    help='The label of the league. This should correspond to categories in '
         'your config.ini file.')
-aa('week', type=int, help='The week number.')
+aa('week', nargs='?', type=int,
+   help='The week number. Defaults to the current week.')
 conf = parser.parse_args()
 
 lgconf = fantasy.find(conf.league_label)
 db = fantasy.db()
+
+if conf.week is None:
+    conf.week = db.get_week()
 
 teams = db.teams_by_id(lgconf)
 matchups = db.matchups(lgconf, conf.week)

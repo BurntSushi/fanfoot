@@ -1,0 +1,47 @@
+#!/usr/bin/env python2
+
+import argparse
+import sys
+
+import nflgame
+
+import fantasy
+
+parser = argparse.ArgumentParser(
+    description='View the scoreboard for a week in a league.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+aa = parser.add_argument
+aa('league_label', type=str,
+   help='The label of the league. This should correspond to categories in '
+        'your config.ini file.')
+aa('week', nargs='?', type=int,
+   help='The week number. Defaults to the current week.')
+conf = parser.parse_args()
+
+lgconf = fantasy.find(conf.league_label)
+db = fantasy.db()
+
+if conf.week is None:
+    conf.week = db.get_week()
+
+teams = db.teams_by_id(lgconf)
+matchups = db.matchups(lgconf, conf.week)
+if not matchups:
+    print 'No matchups for week %d in league %s.' % (conf.week, lgconf.label)
+    sys.exit(1)
+
+# Preload all game data for each team.
+for team in [t[0] for t in nflgame.teams]:
+    fantasy.game_max_stats(2012, conf.week, team)
+
+table = []
+table.append(None)
+for matchup in db.matchups(lgconf, conf.week):
+    s1 = db.score_team(matchup.team1, conf.week)
+    s2 = db.score_team(matchup.team2, conf.week)
+
+    table.append([matchup.team1.name, '%0.2f' % s1])
+    table.append([matchup.team2.name, '%0.2f' % s2])
+    table.append(None)
+print fantasy.table(table)
+

@@ -169,13 +169,17 @@ class Player (object):
         return fantasy.game(int(self.lgconf.season), self.week, self.team)
 
     def game_stats(self):
-        g = self.game()
-        if g is None:
+        year = int(self.lgconf.season)
+        maxstats = fantasy.game_max_stats(year, self.week, self.team)
+        if maxstats is None:
             return None
-        return g.max_player_stats().playerid(self.player.playerid)
+        return maxstats.playerid(self.player.playerid)
 
     def highlights(self, get_stats=True):
         assert False, 'subclass responsibility'
+
+    def __str__(self):
+        return '%s (%s, %s)' % (self.name, self.team, self.pos)
 
 class OffensePlayer (Player):
     def highlights(self, get_stats=True):
@@ -246,8 +250,7 @@ class DefensePlayer (Player):
         if not get_stats:
             return base
 
-        stats = self.players()
-        if stats is None:
+        if len(list(self.players())) == 0:
             return base
 
         return _create_statrow('defense', self._add_base_info({
@@ -276,7 +279,10 @@ class DefensePlayer (Player):
 
     @property
     def sacks(self):
-        return self._count_stat('defense_sk')
+        cnt = 0
+        for p in self.players().filter(defense_sk__ge=0.5):
+            cnt += p.defense_sk
+        return cnt
 
     @property
     def safeties(self):
@@ -354,11 +360,13 @@ class DefensePlayer (Player):
 
     def players(self):
         game = self.game()
-        if game is None:
+        year = int(self.lgconf.season)
+        maxstats = fantasy.game_max_stats(year, self.week, self.team)
+        if game is None or maxstats is None:
             return nflgame.seq.GenPlayerStats([])
 
         home = game.home == self.name
-        return game.max_player_stats().filter(home=home)
+        return maxstats.filter(home=home)
 
     def _count_stat(self, stat):
         cnt = 0

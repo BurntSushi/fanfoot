@@ -15,9 +15,10 @@ _sort_positions = {
     'K': 6,
     'DEF': 7,
     'BN': 8,
+    'IR': 9,
 }
 
-Team = namedtuple('Team', ['id', 'name'])
+Team = namedtuple('Team', ['lgconf', 'id', 'name'])
 Matchup = namedtuple('Matchup', ['team1', 'team2'])
 
 class Conn (object):
@@ -42,7 +43,7 @@ class Conn (object):
         ''', (lgconf.key, lgconf.season))
         teams = []
         for row in cursor:
-            t = Team(id=row['team_id'], name=row['team_name'])
+            t = Team(lgconf=lgconf, id=row['team_id'], name=row['team_name'])
             teams.append(t)
         return sorted(teams, key=lambda t: t.id)
 
@@ -66,6 +67,16 @@ class Conn (object):
                 return []
         except ValueError:
             return self.__find_team_by_name(lgconf, team)
+
+    def score_team(self, team, week):
+        """
+        Scores all active players on a team for a particular week, and
+        returns the final score.
+        """
+        players = self.roster(team.lgconf, week, team.id, bench=False)
+        if not players:
+            return 0.0
+        return sum([p.score() or 0.0 for p in players])
 
     def __find_team_by_name(self, lgconf, team_name):
         """
@@ -91,8 +102,10 @@ class Conn (object):
         matchups = []
         for row in cursor:
             m = Matchup(
-                team1=Team(id=row['team1_id'], name=row['team1_name']),
-                team2=Team(id=row['team2_id'], name=row['team2_name']))
+                team1=Team(lgconf=lgconf,
+                           id=row['team1_id'], name=row['team1_name']),
+                team2=Team(lgconf=lgconf,
+                           id=row['team2_id'], name=row['team2_name']))
             matchups.append(m)
         return matchups
 
@@ -108,8 +121,10 @@ class Conn (object):
         matchups = []
         for row in cursor:
             m = Matchup(
-                team1=Team(id=row['team1_id'], name=row['team1_name']),
-                team2=Team(id=row['team2_id'], name=row['team2_name']))
+                team1=Team(lgconf=lgconf,
+                           id=row['team1_id'], name=row['team1_name']),
+                team2=Team(lgconf=lgconf,
+                           id=row['team2_id'], name=row['team2_name']))
             matchups.append(m)
         return matchups
 

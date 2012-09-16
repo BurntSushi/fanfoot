@@ -2,8 +2,9 @@ from collections import namedtuple
 
 import fantasy
 
-_MAX_SCORE = 999.0
+_MAX_GAME_SCORE = 999.0
 
+# These settings reflect standard scoring at Yahoo.
 _default = [
     ('round', 2.0),
     ('passing_yds', 0.04), ('passing_tds', 4.0), ('passing_int', -1.0),
@@ -23,7 +24,7 @@ _default = [
     ('defense_tds', 6.0), ('defense_safe', 2.0),
     ('defense_fgblk', 2.0), ('defense_puntblk', 2.0), ('defense_xpblk', 2.0),
     ('defense_krtds', 6.0), ('defense_prtds', 6.0),
-    ('defense_pa_cat', [0.0, 6.0, 13.0, 20.0, 27.0, 34.0, _MAX_SCORE]),
+    ('defense_pa_cat', [0.0, 6.0, 13.0, 20.0, 27.0, 34.0, _MAX_GAME_SCORE]),
     ('defense_pa_pts', [10.0, 7.0, 4.0, 1.0, 0.0, -1.0, -4.0]),
 ]
 
@@ -146,7 +147,7 @@ def create_config(d):
         if k == 'defense_pa_cat':
             vals = v.split()
             if vals.index('+') != -1:
-                vals[vals.index('+')] = _MAX_SCORE
+                vals[vals.index('+')] = _MAX_GAME_SCORE
             dconf['defense_pa_cat'] = map(float, vals)
         elif k == 'defense_pa_pts':
             dconf['defense_pa_pts'] = map(float, v.split())

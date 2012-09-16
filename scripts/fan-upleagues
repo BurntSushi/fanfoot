@@ -2,6 +2,7 @@
 
 import argparse
 import re
+import sys
 import urllib2
 
 from bs4 import BeautifulSoup
@@ -17,13 +18,20 @@ parser = argparse.ArgumentParser(
                 'particular week.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 aa = parser.add_argument
+aa('--week', type=int, default=0,
+   help='The week to update. If omitted, the current week will be updated.')
 aa('--all', action='store_true',
    help='When set, load all weeks up to and including the current week. '
-        'Otherwise, only update the current week.')
+        'Otherwise, only update the current week. This option overrides the '
+        '"week" option.')
 conf = parser.parse_args()
 
-espn_roster_url = 'http://games.espn.go.com/ffl/' \
-                  'leaguerosters?leagueId=%s&weekId=%d'
+espn_roster_url = 'http://games.espn.go.com/ffl/playertable/prebuilt/' \
+                  'manageroster?leagueId=%s&teamId=%d&seasonId=%s' \
+                  '&scoringPeriodId=%d&view=overview&context=clubhouse' \
+                  '&ajaxPath=playertable/prebuilt/manageroster' \
+                  '&managingIr=false&droppingPlayers=false' \
+                  '&asLM=false'
 espn_matchup_url = 'http://games.espn.go.com/ffl/schedule?leagueId=%s'
 
 positions = [
@@ -50,6 +58,10 @@ def find_player_id(name, team):
     assert len(hits) == 1, \
         'Found %d hits for "%s": %s' % (len(hits), name, map(str, hits))
     return hits[0].playerid
+
+
+def eprint(s):
+    print >> sys.stderr, s
 
 
 def load_yahoo_rosters(conn, lgconf, week):
@@ -101,44 +113,47 @@ def load_yahoo_matchups(conn, lgconf, week):
     conn.commit()
 
 def load_espn_rosters(conn, lgconf, week):
-    soup = espn_soup(espn_roster_url % (lgconf.key, week))
-    teams = get_espn_team_map(soup)
+    matchup_soup = espn_soup(espn_matchup_url % lgconf.key)
+    teams = get_espn_team_map(matchup_soup)
     conn.delete_rosters(lgconf, week)
 
-    plinks = soup.find_all('a', tab="null",
-                           seasonid=lgconf.season, leagueid=lgconf.key)
-    for plink in plinks:
-        name = nouni(plink.get_text()).replace('D/ST', '').strip()
-        play_pos = nouni(plink.find_parent('tr').find('td').get_text()).strip()
-        play_pos = standard_position(play_pos)
+    for team_id in teams:
+        soup = espn_soup(espn_roster_url
+                         % (lgconf.key, int(team_id), lgconf.season, week))
+        plinks = soup.find_all('a', tab="null",
+                               seasonid=lgconf.season, leagueid=lgconf.key)
+        for plink in plinks:
+            name = nouni(plink.get_text()).replace('D/ST', '').strip()
+            play_pos = nouni(plink.find_parent('tr').find('td').get_text())
+            play_pos = standard_position(play_pos.strip())
 
-        team_pos = nouni(unicode(plink.next_sibling)).strip(' \r\n,*').strip()
-        if ',' in team_pos:  # screw multi-position players
-            team_pos = team_pos[:team_pos.index(',')]
+            team_pos = nouni(unicode(plink.next_sibling)).strip(' \r\n,*')
+            team_pos = team_pos.strip()
+            if ',' in team_pos:  # screw multi-position players
+                team_pos = team_pos[:team_pos.index(',')]
 
-        if team_pos.lower() == 'd/st':
-            playerid = "0"
-            name = nflgame.standard_team(name)
-            team = name
-            assert team is not None, 'Bad team: %s' % plink.get_text().strip()
-        else:
-            team, pos = team_pos.split()
-            team = nflgame.standard_team(team)
-            playerid = find_player_id(name, team)
-            assert team is not None, 'Bad team: %s' % team_pos
+            if team_pos.lower() == 'd/st':
+                playerid = "0"
+                name = nflgame.standard_team(name)
+                team = name
+                assert team is not None, \
+                    'Bad team: %s' % plink.get_text().strip()
+            else:
+                team, pos = team_pos.split()
+                team = nflgame.standard_team(team)
+                playerid = find_player_id(name, team)
+                assert team is not None, \
+                    'Bad team: %s' % team_pos
 
-        team_link = plink.find_parent('table').find('a')['href']
-        team_id = re.search('teamId=([0-9]+)', team_link).group(1)
-
-        conn.add_roster(
-            lgconf=lgconf,
-            team_id=team_id,
-            team_name=teams[team_id],
-            week=week,
-            player_gsisid=playerid,
-            player_name=name,
-            player_team=team,
-            player_pos=play_pos)
+            conn.add_roster(
+                lgconf=lgconf,
+                team_id=team_id,
+                team_name=teams[team_id],
+                week=week,
+                player_gsisid=playerid,
+                player_name=name,
+                player_team=team,
+                player_pos=play_pos)
 
     conn.commit()
 
@@ -160,6 +175,9 @@ def load_espn_matchups(conn, lgconf, week):
         this_week = this_week.find_previous_sibling('tr', 'tableHead')
         this_week = nouni(this_week.get_text()).strip()
         this_week = int(this_week.replace('WEEK', '').strip())
+
+        if this_week != week:
+            continue
 
         conn.add_matchup(
             lgconf=lgconf,
@@ -205,14 +223,20 @@ def nouni(text):
 if __name__ == '__main__':
     fantasy.ffyql.connect()
     conn = fantasy.league.Conn()
-    cur_week = conn.get_week()
+
     if conf.all:
+        _, cur_week = nflgame.live.current_year_and_week()
         rng = xrange(1, cur_week + 1)
     else:
+        if conf.week == 0:
+            _, cur_week = nflgame.live.current_year_and_week()
+        else:
+            cur_week = conf.week
         rng = xrange(cur_week, cur_week + 1)
 
     for week in rng:
         for lgconf in fantasy.leagues().itervalues():
+            eprint('Loading %s, week %d' % (lgconf.label, week))
             if lgconf.kind == 'yahoo':
                 load_yahoo_rosters(conn, lgconf, week)
                 load_yahoo_matchups(conn, lgconf, week)

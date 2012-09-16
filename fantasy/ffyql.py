@@ -20,11 +20,11 @@ def connect():
 
     _key = _config['key']
     _secret = _config['secret']
-    _store_key = _config['store_key']
+    _storage_key = _config['storage_key']
 
     if not os.access(_cache_dir, os.R_OK):
         os.mkdir(_cache_dir)
-    token_store = yql.storage.FileTokenStore(_cache_dir, secret=_store_key)
+    token_store = yql.storage.FileTokenStore(_cache_dir, secret=_storage_key)
 
     yqlconn = yql.ThreeLegged(_key, _secret)
 

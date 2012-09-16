@@ -10,6 +10,7 @@ import fantasy.scoring
 cur_dir = os.path.split(__file__)[0]
 
 _game_cache = {}
+_max_stats_cache = {}
 
 LeagueConfig = namedtuple('LeagueConfig',
                           ['label', 'kind', 'season', 'key', 'scoring'])
@@ -26,8 +27,26 @@ def game(year, week, team):
     """
     key = (year, week, team)
     if key not in _game_cache:
-        _game_cache[key] = nflgame.one(year, week, home=team, away=team)
+        _game_cache[key] = nflgame.one(year, week, home=team, away=team,
+                                       started=True)
     return _game_cache[key]
+
+def game_max_stats(year, week, team):
+    """
+    A convenience function for retrieving max player stats from nflgame.
+
+    This uses a cache so that JSON game data only needs to be parsed and
+    loaded once. Plus, max player stats are only computed once for each
+    game.
+    """
+    key = (year, week, team)
+    if key not in _max_stats_cache:
+        g = game(year, week, team)
+        if g is None:
+            _max_stats_cache[key] = None
+        else:
+            _max_stats_cache[key] = g.max_player_stats()
+    return _max_stats_cache[key]
 
 def find(label):
     return leagues()[label]
@@ -65,6 +84,10 @@ def table(lst):
     output = []
     first_row = True
     for row in lst:
+        if row is None:
+            output.append([])
+            continue
+
         output_row = []
         for i, cell in enumerate(row):
             cell = str(cell)
