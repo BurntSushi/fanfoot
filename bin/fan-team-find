@@ -1,0 +1,34 @@
+#!/usr/bin/env python2
+
+import argparse
+import sys
+
+import fanfoot
+import fanfoot.player
+
+parser = argparse.ArgumentParser(
+    description='View your fantasy league team roster for a particular week.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+aa = parser.add_argument
+aa('league_label', type=str,
+   help='The label of the league. This should correspond to categories in '
+        'your config.ini file.')
+aa('team', type=str, help='The name of the team or the team id.')
+conf = parser.parse_args()
+
+lgconf = fanfoot.find(conf.league_label)
+db = fanfoot.db()
+
+team = db.find_team(lgconf, conf.team)
+if not team:
+    print >> sys.stderr, 'Could not find team "%s" in league %s.' \
+                         % (conf.team, lgconf.label)
+    sys.exit(1)
+if len(team) > 1:
+    hits = [str(t.name) for t in team]
+    print >> sys.stderr, 'Found too many hits for team "%s" in league %s: %s' \
+                         % (conf.team, lgconf.label, hits)
+    sys.exit(1)
+team = team[0]
+
+print team.name
