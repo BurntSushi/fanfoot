@@ -19,6 +19,10 @@ aa('--bench', action='store_true',
    help='When set, bench players will be shown.')
 aa('--nostats', action='store_false',
    help='When set, stats will not be fetched and will be set to 0.')
+aa('--csv', action='store_true',
+   help='When set, output will be in tab delimited format.')
+aa('--short', action='store_true',
+   help='When set, only the player information and score will be shown.')
 conf = parser.parse_args()
 
 lgconf = fanfoot.find(conf.league_label)
@@ -47,19 +51,32 @@ groups = fanfoot.player.group(players)
 headers = fanfoot.player.highlight_headers()
 total = 0.0
 for i, (group, header) in enumerate(zip(groups, headers)):
-    table.append(header + ['Score'])
+    if conf.short:
+        table.append(header[0:3] + ['Score'])
+    else:
+        table.append(header + ['Score'])
+
     for player in group:
         row = player.highlights(get_stats=conf.nostats)
+        score = None
+
         if conf.nostats:
             s = player.score()
             if s is not None:
-                row += ['%0.2f' % s]
+                score = '%0.2f' % s
                 if player.pos != 'BN':
                     total += s
             else:
-                row += ['-']
+                score = '-'
+        if conf.short:
+            row = row[0:3] + [score]
         else:
-            row += ['-']
+            row += [score]
+
+        g = player.game()
+        if g is not None and g.playing():
+            row[2] = '* %s' % row[2]
+
         table.append(row)
     table.append('')
 
@@ -71,5 +88,8 @@ else:
     total_row[-1] = '%0.2f' % total
 table.append(total_row)
 
-print fanfoot.table(table)
+if conf.csv:
+    print fanfoot.table_csv(table)
+else:
+    print fanfoot.table(table)
 
