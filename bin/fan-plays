@@ -72,7 +72,7 @@ def play_has_player(play):
     return False
 
 last_games = []
-def cb(active, completed):
+def cb(active, completed, diffs):
     global last_games
 
     for game in active + completed:
