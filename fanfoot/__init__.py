@@ -68,6 +68,15 @@ def leagues(config_path=None):
                                  scoring=fanfoot.scoring.create_config(d))
     return league_info
 
+def table_csv(lst):
+    lines = []
+    for row in lst:
+        if row is None:
+            lines.append('')
+        else:
+            lines.append('\t'.join(map(str, row)))
+    return '\n'.join(lines)
+
 def table(lst):
     """
     Takes a list of iterables and returns them as a nicely formatted table.
