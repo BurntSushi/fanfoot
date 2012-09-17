@@ -16,12 +16,14 @@ aa('league_label', type=str,
         'your config.ini file.')
 aa('week', nargs='?', type=int,
    help='The week number. Defaults to the current week.')
+aa('--csv', action='store_true',
+   help='When set, output will be in tab delimited format.')
 conf = parser.parse_args()
 
 lgconf = fanfoot.find(conf.league_label)
 db = fanfoot.db()
 
-if conf.week is None:
+if conf.week is None or conf.week == 0:
     conf.week = db.get_week()
 
 teams = db.teams_by_id(lgconf)
@@ -43,5 +45,9 @@ for matchup in db.matchups(lgconf, conf.week):
     table.append([matchup.team1.name, '%0.2f' % s1])
     table.append([matchup.team2.name, '%0.2f' % s2])
     table.append(None)
-print fanfoot.table(table)
+
+if conf.csv:
+    print fanfoot.table_csv(table)
+else:
+    print fanfoot.table(table)
 
