@@ -1,0 +1,9 @@
+#!/bin/sh
+
+while true; do
+  fan-upstats-current
+  echo "Loaded current stats..."
+  echo "--------------------------------------"
+  sleep 15
+done
+

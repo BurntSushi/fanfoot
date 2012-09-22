@@ -23,7 +23,7 @@ aa('league_teams', type=str, nargs='+',
 conf = parser.parse_args()
 
 
-db = fanfoot.db()
+db = fanfoot.conn()
 cur_week = db.get_week()
 
 tracking = []

@@ -2,9 +2,9 @@
 
 import nflgame.live
 
-import fantasy.league
+import fanfoot
 
 if __name__ == '__main__':
     year, week = nflgame.live.current_year_and_week()
-    conn = fantasy.league.Conn()
+    conn = fanfoot.conn()
     conn.update_status('REG', year, week)

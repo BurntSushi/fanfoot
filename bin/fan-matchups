@@ -17,7 +17,7 @@ aa('week', nargs='?', type=int,
 conf = parser.parse_args()
 
 lgconf = fanfoot.find(conf.league_label)
-db = fanfoot.db()
+db = fanfoot.conn()
 
 if conf.week is None:
     conf.week = db.get_week()

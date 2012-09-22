@@ -11,7 +11,6 @@ import nflgame.live
 
 import fanfoot
 import fanfoot.ffyql
-import fanfoot.league
 
 parser = argparse.ArgumentParser(
     description='Update the league information (rosters and matchups) for a '
@@ -76,7 +75,7 @@ def load_yahoo_rosters(conn, lgconf, week):
             team = nflgame.standard_team(player['editorial_team_abbr'])
             pos = standard_position(player['selected_position']['position'])
             if player['display_position'] == 'DEF':
-                playerid = "0"
+                playerid = "DEF-%s" % team
                 name = team
             else:
                 playerid = find_player_id(name, team)
@@ -133,9 +132,9 @@ def load_espn_rosters(conn, lgconf, week):
                 team_pos = team_pos[:team_pos.index(',')]
 
             if team_pos.lower() == 'd/st':
-                playerid = "0"
                 name = nflgame.standard_team(name)
                 team = name
+                playerid = "DEF-%s" % team
                 assert team is not None, \
                     'Bad team: %s' % plink.get_text().strip()
             else:
@@ -222,7 +221,7 @@ def nouni(text):
 
 if __name__ == '__main__':
     fanfoot.ffyql.connect()
-    conn = fanfoot.league.Conn()
+    conn = fanfoot.conn()
 
     if conf.all:
         _, cur_week = nflgame.live.current_year_and_week()

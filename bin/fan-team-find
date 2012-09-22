@@ -17,7 +17,7 @@ aa('team', type=str, help='The name of the team or the team id.')
 conf = parser.parse_args()
 
 lgconf = fanfoot.find(conf.league_label)
-db = fanfoot.db()
+db = fanfoot.conn()
 
 team = db.find_team(lgconf, conf.team)
 if not team:

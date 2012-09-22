@@ -1,0 +1,83 @@
+#!/usr/bin/env python2
+
+import sys
+
+import nflgame.alert
+import nflgame.live
+
+import fanfoot
+
+# This configuration is temporary. I'll probably move this out to an INI
+# file at some point.
+config = {
+    ('7742802713', 'Verizon'): [
+        ('keeper', 'Langdon Algers'),
+        ('espn', 'Langdon Algers'),
+        ('pub1', 'Langdon Algers'),
+        ('pub2', 'Langdon Algers'),
+    ],
+}
+
+def alert(lgconf, who, msg):
+    msg = '%s: %s' % (lgconf.label, msg)
+
+    if isinstance(who, tuple):
+        phone, provider = who
+        nflgame.alert.sms(phone, msg, provider=provider)
+    elif isinstance(who, basestring):
+        if '@' in who:
+            raise NotImplemented
+        else:
+            nflgame.alert.sms(phone, msg)
+    else:
+        assert False, 'Unknown who: "%s" (type: %s)' % (who, type(who))
+
+def eprint(s):
+    print >> sys.stderr, s
+
+def to_alert(gsis_id):
+    ret = []
+    for who, lgconf, team, pids in tracking:
+        if gsis_id in pids:
+            ret.append((who, lgconf))
+    return ret
+
+def cb(active, completed, diffs):
+    for diff in diffs:
+        for p in diff.players:
+            if p.tds >= 1:
+                for who, lgconf in to_alert(p.playerid):
+                    alert(lgconf, who, '%s scored!' % p.name)
+
+db = fanfoot.conn()
+cur_week = db.get_week()
+
+tracking = []
+for who, leagues in config.iteritems():
+    for league in leagues:
+        try:
+            lgconf = fanfoot.find(league[0])
+        except KeyError:
+            eprint('Could not find league with label "%s".' % league[0])
+            sys.exit(1)
+
+        team = db.find_team(lgconf, league[1])
+        if not team:
+            eprint('Could not find team "%s" in league %s.'
+                   % (league[1], league[0]))
+            sys.exit(1)
+        if len(team) > 1:
+            hits = [str(t.name) for t in team]
+            eprint('Found too many hits for team "%s" in league %s: %s'
+                   % (league[1], lgconf.label, hits))
+            sys.exit(1)
+        team = team[0]
+
+        players = db.roster(lgconf, cur_week, team.id, bench=False)
+        pids = [p.player.playerid for p in players]
+        tracking.append((who, lgconf, team, pids))
+
+
+nflgame.alert.gmail_login('jamslam@gmail.com', '2cool4u!')
+nflgame.live.run(cb)
+

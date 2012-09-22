@@ -3,3 +3,5 @@ fanfoot/yql.ini
 fanfoot/.cache
 tags
 TAGS
+mysql.ini
+web-php

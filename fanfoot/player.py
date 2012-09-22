@@ -2,6 +2,7 @@ import nflgame.player
 import nflgame.seq
 
 import fanfoot
+import fanfoot.stats
 
 _HEADERS = {
     'offense': [('pos', 'Pos'), ('team', 'Team'), ('name', 'Name'),
@@ -124,7 +125,7 @@ def _create_statrow(cat, d):
         lst.append(d.get(field, '-'))
     return lst
 
-def create_player(lgconf, week, gsis_id, pos, team, name):
+def create_player(db, lgconf, week, gsis_id, pos, team, name):
     if name == team:  # Defense!
         playermeta = nflgame.player.PlayerDefense(team)
     else:
@@ -137,22 +138,33 @@ def create_player(lgconf, week, gsis_id, pos, team, name):
     else:
         init = OffensePlayer
 
-    return init(lgconf, week, gsis_id, pos, team, name, playermeta)
+    return init(db, lgconf, week, gsis_id, pos, team, name, playermeta)
 
 class Player (object):
-    def __init__(self, lgconf, week, gsis_id, pos, team, name, playermeta): 
+    def __init__(self, db, lgconf, week, gsis_id, pos, team, name, playermeta): 
+        self.db = db
         self.lgconf = lgconf
         self.week = week
         self.pos = pos
         self.team = team
         self.name = name
         self.player = playermeta
+        self.playerid = gsis_id
+        self.computed_score = fanfoot.stats.score(self.db, lgconf,
+                                                  week, gsis_id)
 
         self._base_info = {
             'pos': self.pos,
             'team': self.team,
             'name': self.name,
         }
+
+        self._game = fanfoot.stats.game(self.db, 2012, self.week, self.team)
+        if self._game is None:
+            self.stats = None
+        else:
+            self.stats = fanfoot.stats.player(self.db, self._game.game_id,
+                                              self.playerid)
 
     def _add_base_info(self, d):
         newd = {}
@@ -165,15 +177,19 @@ class Player (object):
     def score(self):
         return fanfoot.scoring.score(self)
 
+    def plays(self):
+        return fanfoot.stats.plays(self.db, self._game.game_id)
+
     def game(self):
-        return fanfoot.game(int(self.lgconf.season), self.week, self.team)
+        return self._game
 
     def game_stats(self):
-        year = int(self.lgconf.season)
-        maxstats = fanfoot.game_max_stats(year, self.week, self.team)
-        if maxstats is None:
+        return self.stats
+
+    def playing(self):
+        if self._game is None:
             return None
-        return maxstats.playerid(self.player.playerid)
+        return self._game.playing
 
     def highlights(self, get_stats=True):
         assert False, 'subclass responsibility'
@@ -193,18 +209,18 @@ class OffensePlayer (Player):
 
         return _create_statrow('offense', self._add_base_info({
             'passing_cmp': '%d/%d' % (stats.passing_cmp, stats.passing_att),
-            'passing_yds': stats.passing_yds,
-            'passing_tds': stats.passing_tds,
-            'passing_int': stats.passing_int,
-            'rushing_att': stats.rushing_att,
-            'rushing_yds': stats.rushing_yds,
-            'rushing_tds': stats.rushing_tds,
+            'passing_yds': int(stats.passing_yds),
+            'passing_tds': int(stats.passing_tds),
+            'passing_int': int(stats.passing_int),
+            'rushing_att': int(stats.rushing_att),
+            'rushing_yds': int(stats.rushing_yds),
+            'rushing_tds': int(stats.rushing_tds),
             'receiving_rec': '%d/%d' % (stats.receiving_rec,
                                         stats.receiving_tar),
-            'receiving_yds': stats.receiving_yds,
-            'receiving_tds': stats.receiving_tds,
-            'twoptm': stats.twoptm,
-            'fumlost': stats.fumbles_lost,
+            'receiving_yds': int(stats.receiving_yds),
+            'receiving_tds': int(stats.receiving_tds),
+            'twoptm': int(stats.twoptm),
+            'fumlost': int(stats.fumbles_lost),
         }))
 
 class KickingPlayer (Player):
@@ -212,16 +228,22 @@ class KickingPlayer (Player):
         g = self.game()
         if g is None:
             return []
-        plays = g.drives.plays().filter(kicking_fga__gt=0)
+
         fgs = []
-        for play in plays:
-            stats = play.players.playerid(self.player.playerid)
-            if stats is None:  # more than one FG kicker in a game?
+        for play in self.plays():
+            if play.kicking_fga == 0:
                 continue
-            if stats.kicking_fgm > 0:
-                fgs.append((stats.kicking_fgm_yds, True))
+
+            # XXX: This will fail if there is more than FG kicker in a game.
+            stats = fanfoot.stats.player(self.db, self._game.game_id,
+                                         self.playerid)
+            if stats is None or stats.home != play.home:
+                continue
+
+            if play.kicking_fgm > 0:
+                fgs.append((play.kicking_fgm_yds, True))
             else:
-                fgs.append((stats.kicking_fgmissed_yds, False))
+                fgs.append((play.kicking_fgmissed_yds, False))
         return fgs
 
     def highlights(self, get_stats=True):
@@ -254,15 +276,15 @@ class DefensePlayer (Player):
             return base
 
         return _create_statrow('defense', self._add_base_info({
-            'tds': self.tds,
-            'int': self.ints,
-            'fumrec': self.fumrecs,
+            'tds': int(self.tds),
+            'int': int(self.ints),
+            'fumrec': int(self.fumrecs),
             'sack': self.sacks,
-            'safety': self.safeties,
-            'pa': self.points_allowed,
-            'ktd': self.krtds,
-            'prtd': self.prtds,
-            'blk': self.blocks,
+            'safety': int(self.safeties),
+            'pa': int(self.points_allowed),
+            'ktd': int(self.krtds),
+            'prtd': int(self.prtds),
+            'blk': int(self.blocks),
         }))
 
     @property
@@ -279,7 +301,7 @@ class DefensePlayer (Player):
 
     @property
     def sacks(self):
-        cnt = 0
+        cnt = 0.0
         for p in self.players().filter(defense_sk__ge=0.5):
             cnt += p.defense_sk
         return cnt
@@ -333,7 +355,7 @@ class DefensePlayer (Player):
             # goal return tds and safeties. We do the subtraction iteratively
             # over each play in the game.
             pa = game.score_away if home else game.score_home
-            for play in game.drives.plays():
+            for play in self.plays():
                 # We're only subtracting points when the defense isn't
                 # on the field.
                 if home != play.home:
@@ -360,13 +382,12 @@ class DefensePlayer (Player):
 
     def players(self):
         game = self.game()
-        year = int(self.lgconf.season)
-        maxstats = fanfoot.game_max_stats(year, self.week, self.team)
-        if game is None or maxstats is None:
+        if game is None:
             return nflgame.seq.GenPlayerStats([])
 
         home = game.home == self.name
-        return maxstats.filter(home=home)
+        player_gen = fanfoot.stats.players(self.db, self._game.game_id)
+        return nflgame.seq.GenPlayerStats(player_gen).filter(home=home)
 
     def _count_stat(self, stat):
         cnt = 0

@@ -14,7 +14,7 @@ aa('league_label', type=str,
 conf = parser.parse_args()
 
 lgconf = fanfoot.find(conf.league_label)
-db = fanfoot.db()
+db = fanfoot.conn()
 
 for team in db.teams(lgconf):
     print '%s %s' % (str(team.id).ljust(3), team.name)

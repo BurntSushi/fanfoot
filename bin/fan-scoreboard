@@ -3,8 +3,6 @@
 import argparse
 import sys
 
-import nflgame
-
 import fanfoot
 
 parser = argparse.ArgumentParser(
@@ -21,7 +19,7 @@ aa('--csv', action='store_true',
 conf = parser.parse_args()
 
 lgconf = fanfoot.find(conf.league_label)
-db = fanfoot.db()
+db = fanfoot.conn()
 
 if conf.week is None or conf.week == 0:
     conf.week = db.get_week()
@@ -31,10 +29,6 @@ matchups = db.matchups(lgconf, conf.week)
 if not matchups:
     print 'No matchups for week %d in league %s.' % (conf.week, lgconf.label)
     sys.exit(1)
-
-# Preload all game data for each team.
-for team in [t[0] for t in nflgame.teams]:
-    fanfoot.game_max_stats(2012, conf.week, team)
 
 table = []
 table.append(None)

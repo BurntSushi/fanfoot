@@ -26,7 +26,7 @@ aa('--short', action='store_true',
 conf = parser.parse_args()
 
 lgconf = fanfoot.find(conf.league_label)
-db = fanfoot.db()
+db = fanfoot.conn()
 
 team = db.find_team(lgconf, conf.team)
 if not team:
@@ -61,7 +61,7 @@ for i, (group, header) in enumerate(zip(groups, headers)):
         score = None
 
         if conf.nostats:
-            s = player.score()
+            s = player.computed_score
             if s is not None:
                 score = '%0.2f' % s
                 if player.pos != 'BN':
@@ -74,7 +74,7 @@ for i, (group, header) in enumerate(zip(groups, headers)):
             row += [score]
 
         g = player.game()
-        if g is not None and g.playing():
+        if g is not None and g.playing:
             row[2] = '* %s' % row[2]
 
         table.append(row)
