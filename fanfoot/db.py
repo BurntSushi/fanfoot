@@ -14,13 +14,14 @@ import fanfoot.stats
 _sort_positions = {
     'QB': 1,
     'RB': 2,
-    'WR': 3,
-    'TE': 4,
-    'FLEX': 5,
-    'K': 6,
-    'DEF': 7,
-    'BN': 8,
-    'IR': 9,
+    'FB': 3,
+    'WR': 4,
+    'TE': 5,
+    'FLEX': 6,
+    'K': 7,
+    'DEF': 8,
+    'BN': 9,
+    'IR': 10,
 }
 
 Game = namedtuple('Game',
