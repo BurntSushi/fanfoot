@@ -241,7 +241,7 @@ bottle.TEMPLATE_PATH.append('./web/')
 bottle.SimpleTemplate.defaults['url'] = url
 bottle.SimpleTemplate.defaults['url_query'] = url_query
 
-bottle.SimpleTemplate.defaults['norefresh'] = True
+# bottle.SimpleTemplate.defaults['norefresh'] = True 
 
 bottle.run(app=app, host='0.0.0.0', port=8090, reloader=True)
 
