@@ -18,9 +18,9 @@
 </head>
 <body>
   <div id="container"><div id="container2">
-  <header>
+  <!-- <header>
     <h1>Fantasy 2012 :: {{title}}</h1>
-  </header>
+  </header> -->
   <div id="content-cont">
     <div id="content" role="main">
 
