@@ -29,6 +29,7 @@ def plays(league_teams, week=None):
     db = fanfoot.conn()
     bench = bottle.request.query.bench == '1'
     live = bottle.request.query.live == '1'
+    short = bottle.request.query.short == '1'
     if week is None:
         week = db.get_week()
 
@@ -59,7 +60,11 @@ def plays(league_teams, week=None):
         return False
 
     def week_url(week):
-        query_pairs = {'bench': int(bench), 'live': int(live)}
+        query_pairs = {
+            'bench': int(bench),
+            'live': int(live),
+            'short': int(short),
+        }
         return url_query('plays_week', query_pairs,
                          league_teams=league_teams, week=week)
 
@@ -73,14 +78,22 @@ def plays(league_teams, week=None):
         highlight_play=highlight_play,
         bench=bench,
         live=live,
+        short=short,
         week_url=week_url,
         bench_url=url_query('plays_week',
                             {'bench': 0 if bench else 1,
-                             'live': int(live)},
+                             'live': int(live),
+                             'short': int(short),},
                             league_teams=league_teams, week=week),
         live_url=url_query('plays_week',
                            {'bench': int(bench),
-                            'live': 0 if live else 1},
+                            'live': 0 if live else 1,
+                            'short': int(short)},
+                            league_teams=league_teams, week=week),
+        short_url=url_query('plays_week',
+                            {'bench': int(bench),
+                             'live': int(live),
+                             'short': 0 if short else 1},
                             league_teams=league_teams, week=week),
     )
 

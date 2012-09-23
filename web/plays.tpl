@@ -9,17 +9,25 @@
   <li>
     <a href="{{live_url}}">{{"Sort by start" if live else "Sort live"}}</a>
   </li>
+  <li>
+    <a href="{{short_url}}">{{"Long" if short else "Short"}}</a>
+  </li>
 </ul>
 
 <h2>Plays for week {{week}}</h2>
 <table>
   <tr>
-    <th>Start</th>
-    <th>Time</th>
-    <th>Home</th>
-    <th>Away</th>
-    <th>Down</th>
-    <th>Yd Line</th>
+    %if not short:
+      <th>Start</th>
+      <th>Time</th>
+      <th>Home</th>
+      <th>Away</th>
+      <th>Down</th>
+      <th>Yd Line</th>
+    %else:
+      <th>Home</th>
+      <th>Away</th>
+    %end
     <th>Play</th>
   </tr>
 
@@ -35,12 +43,17 @@
     %h_poss = ' poss' if p.team == g.home else ''
     %a_poss = ' poss' if p.team == g.away else ''
 
-      <td class="nowrap">{{sched['wday']}}, {{sched['time']}}</td>
-      <td class="nowrap">{{p.time}}</td>
-      <td class="nowrap{{h_poss}}">{{g.home}} ({{g.score_home}})</td>
-      <td class="nowrap{{a_poss}}">{{g.away}} ({{g.score_away}})</td>
-      <td class="nowrap">{{p.down}} and {{p.yards_togo}}</td>
-      <td class="nowrap">{{p.yardline}}</td>
+      %if not short:
+        <td class="nowrap">{{sched['wday']}}, {{sched['time']}}</td>
+        <td class="nowrap">{{p.time}}</td>
+        <td class="nowrap{{h_poss}}">{{g.home}} ({{g.score_home}})</td>
+        <td class="nowrap{{a_poss}}">{{g.away}} ({{g.score_away}})</td>
+        <td class="nowrap">{{p.down}} and {{p.yards_togo}}</td>
+        <td class="nowrap">{{p.yardline}}</td>
+      %else:
+        <td class="nowrap{{h_poss}}">{{g.home}} ({{g.score_home}})</td>
+        <td class="nowrap{{a_poss}}">{{g.away}} ({{g.score_away}})</td>
+      %end
       <td>{{p.desc}}</td>
     </tr>
   %end
