@@ -362,56 +362,32 @@ class Conn (object):
         return g
 
     def add_play(self, week, game_id, play):
-        existing = fanfoot.stats.all_plays(self, game_id)
-        if (game_id, int(play.playid)) in existing:
-            vals = (
-                play.desc,
-                play.note,
-                play.down,
-                play.yards_togo,
-                str(play.time),
-                play.data['yrdln'],
-                game_id,
-                play.playid,
-            )
-            self.execute('''
-                DELETE FROM play_stat WHERE game_id = ? AND play_id = ?
-            ''', (game_id, play.playid))
-            self.execute('''
-                UPDATE play
-                SET
-                    descript = ?, note = ?, down = ?, yards_togo = ?,
-                    time = ?, yardline = ?
-                WHERE
-                    game_id = ? AND play_id = ?
-            ''', vals)
-        else:
-            vals = (
-                game_id,
-                week,
-                play.playid,
-                play.team,
-                1 if play.home else 0,
-                play.desc,
-                play.note,
-                play.down,
-                play.yards_togo,
-                str(play.time),
-                play.data['yrdln'],
-                int(time.time()),
-            )
-            self.execute('''
-                INSERT INTO play
-                    (game_id, week, play_id, team, home, descript, note, down,
-                     yards_togo, time, yardline, timeline)
-                VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', vals)
+        vals = (
+            game_id,
+            week,
+            play.playid,
+            play.team,
+            1 if play.home else 0,
+            play.desc,
+            play.note,
+            play.down,
+            play.yards_togo,
+            str(play.time),
+            play.data['yrdln'],
+            int(time.time()),
+        )
+        self.execute('''
+            REPLACE INTO play
+                (game_id, week, play_id, team, home, descript, note, down,
+                 yards_togo, time, yardline, timeline)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', vals)
 
         for k, v in play._stats.iteritems():
             vals = (game_id, play.playid, k, v)
             self.execute('''
-                INSERT INTO play_stat
+                REPLACE INTO play_stat
                     (game_id, play_id, stat, value)
                 VALUES
                     (?, ?, ?, ?)
