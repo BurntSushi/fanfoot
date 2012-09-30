@@ -6,11 +6,17 @@
   <li>
     <a href="{{bench_url}}">{{"No bench" if bench else "Show bench"}}</a>
   </li>
+  <li>::</li>
   <li>
     <a href="{{live_url}}">{{"Sort by start" if live else "Sort live"}}</a>
   </li>
+  <li>::</li>
   <li>
     <a href="{{short_url}}">{{"Long" if short else "Short"}}</a>
+  </li>
+  <li>::</li>
+  <li>
+    <a href="{{only_url}}">{{"All plays" if only else "Only teams"}}</a>
   </li>
 </ul>
 
@@ -34,7 +40,11 @@
   %for p in plays:
     %g = games[p.game_id]
     %sched = nflgame_schedule.games_byid[p.game_id]
-    %if highlight_play(p):
+    %highlighted = highlight_play(p)
+
+    %if only and not highlighted: continue
+
+    %if not only and highlighted:
       <tr class="highlighted">
     %else:
       <tr>

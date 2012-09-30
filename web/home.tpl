@@ -1,4 +1,4 @@
-%rebase layout title=get('title', '???')
+%rebase layout norefresh=True, title=get('title', '???')
 
 <ul>
   %all_leagues = []

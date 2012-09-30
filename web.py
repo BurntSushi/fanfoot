@@ -30,6 +30,7 @@ def plays(league_teams, week=None):
     bench = bottle.request.query.bench == '1'
     live = bottle.request.query.live == '1'
     short = bottle.request.query.short == '1'
+    only = bottle.request.query.only == '1'
     if week is None:
         week = db.get_week()
 
@@ -64,6 +65,7 @@ def plays(league_teams, week=None):
             'bench': int(bench),
             'live': int(live),
             'short': int(short),
+            'only': int(only),
         }
         return url_query('plays_week', query_pairs,
                          league_teams=league_teams, week=week)
@@ -79,22 +81,32 @@ def plays(league_teams, week=None):
         bench=bench,
         live=live,
         short=short,
+        only=only,
         week_url=week_url,
         bench_url=url_query('plays_week',
                             {'bench': 0 if bench else 1,
                              'live': int(live),
-                             'short': int(short),},
+                             'short': int(short),
+                             'only': int(only),},
                             league_teams=league_teams, week=week),
         live_url=url_query('plays_week',
                            {'bench': int(bench),
                             'live': 0 if live else 1,
-                            'short': int(short)},
+                            'short': int(short),
+                             'only': int(only),},
                             league_teams=league_teams, week=week),
         short_url=url_query('plays_week',
                             {'bench': int(bench),
                              'live': int(live),
-                             'short': 0 if short else 1},
+                             'short': 0 if short else 1,
+                             'only': int(only),},
                             league_teams=league_teams, week=week),
+        only_url=url_query('plays_week',
+                           {'bench': int(bench),
+                            'live': int(live),
+                            'short': int(short),
+                            'only': 0 if only else 1},
+                           league_teams=league_teams, week=week),
     )
 
 @app.route('/league/<labels>', name='league')
@@ -254,7 +266,7 @@ bottle.TEMPLATE_PATH.append('./web/')
 bottle.SimpleTemplate.defaults['url'] = url
 bottle.SimpleTemplate.defaults['url_query'] = url_query
 
-# bottle.SimpleTemplate.defaults['norefresh'] = True 
+bottle.SimpleTemplate.defaults['norefresh'] = True
 
 bottle.run(app=app, host='0.0.0.0', port=8090, reloader=True)
 
