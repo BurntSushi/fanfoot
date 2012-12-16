@@ -47,6 +47,7 @@ positions = [
 
 yahoo_aliases = {
     'Stevie Johnson': 'Steve Johnson',
+    'Joshua Morgan': 'Josh Morgan',
 }
 
 def find_player_id(name, team):
@@ -161,6 +162,7 @@ def load_espn_matchups(conn, lgconf, week):
     conn.delete_matchups(lgconf, week)
 
     matchup_tds = soup.select('td[nobr]')
+    last_week = 0
     for i in xrange(0, len(matchup_tds), 2):
         team1 = matchup_tds[i]
         team2 = matchup_tds[i+1]
@@ -173,7 +175,15 @@ def load_espn_matchups(conn, lgconf, week):
         this_week = team1.find_parent('tr')
         this_week = this_week.find_previous_sibling('tr', 'tableHead')
         this_week = nouni(this_week.get_text()).strip()
-        this_week = int(this_week.replace('WEEK', '').strip())
+        if 'WEEK' in this_week:
+            this_week = int(this_week.replace('WEEK', '').strip())
+            last_week = this_week
+        else:
+            this_week = this_week.replace('ROUND', '')
+            this_week = this_week.replace('-', '')
+            this_week = this_week.replace('PLAYOFFS', '')
+            this_week = int(this_week.strip())
+            this_week += last_week
 
         if this_week != week:
             continue
@@ -237,8 +247,9 @@ if __name__ == '__main__':
         for lgconf in fanfoot.leagues().itervalues():
             eprint('Loading %s, week %d' % (lgconf.label, week))
             if lgconf.kind == 'yahoo':
-                load_yahoo_rosters(conn, lgconf, week)
-                load_yahoo_matchups(conn, lgconf, week)
+                pass
+                # load_yahoo_rosters(conn, lgconf, week) 
+                # load_yahoo_matchups(conn, lgconf, week) 
             elif lgconf.kind == 'espn':
                 load_espn_rosters(conn, lgconf, week)
                 load_espn_matchups(conn, lgconf, week)
