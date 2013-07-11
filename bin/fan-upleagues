@@ -247,9 +247,8 @@ if __name__ == '__main__':
         for lgconf in fanfoot.leagues().itervalues():
             eprint('Loading %s, week %d' % (lgconf.label, week))
             if lgconf.kind == 'yahoo':
-                pass
-                # load_yahoo_rosters(conn, lgconf, week) 
-                # load_yahoo_matchups(conn, lgconf, week) 
+                load_yahoo_rosters(conn, lgconf, week)
+                load_yahoo_matchups(conn, lgconf, week)
             elif lgconf.kind == 'espn':
                 load_espn_rosters(conn, lgconf, week)
                 load_espn_matchups(conn, lgconf, week)
