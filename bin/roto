@@ -9,7 +9,7 @@ import urllib
 
 from bs4 import BeautifulSoup
 import httplib2
-from termcolor import colored
+import termcolor
 
 from fanfoot import table
 
@@ -19,12 +19,19 @@ aa = parser.add_argument
 aa('firstname', nargs='?', default='')
 aa('lastname', default='')
 aa('-one', action='store_true', help='Only show the most recent news item.')
+aa('-plain', action='store_true', help='Disable term colors.')
 args = parser.parse_args()
 
 roto = 'http://www.rotoworld.com'
 roto_search = '%s/content/playersearch.aspx' % roto
+roto_latest = '%s/headlines/nfl/0/Football-Headlines' % roto
 
 reg_clean = re.compile('\s+')
+
+def colored(*fargs, **fkargs):
+    if args.plain:
+        return fargs[0]
+    return termcolor.colored(*fargs, **fkargs)
 
 def clean(s):
     s, _ = reg_clean.subn(' ', s)
@@ -76,7 +83,14 @@ def search(lastname, firstname=''):
         sys.exit(1)
     return content
 
-soup = BeautifulSoup(search(args.lastname, args.firstname))
+if args.lastname == 'latest':
+    resp, content = httplib2.Http().request(roto_latest)
+    if resp['status'] != '200':
+        print >> sys.stderr, resp
+        sys.exit(1)
+    soup = BeautifulSoup(content)
+else:
+    soup = BeautifulSoup(search(args.lastname, args.firstname))
 
 # Look to see if a search results page is given. Prompt the user to make
 # a choice first.
@@ -117,9 +131,11 @@ if results is not None:
 #   date   - The day/time that the "impact" notes were added.
 #   source - The name of the source.
 #   srcurl - The URL of the source.
+#   title  - The headline of the news item. (Only for "latest" news.)
+entries = { }
 def mkentry(ident, item):
     e = { 'report': None, 'impact': None, 'date': None,
-          'source': None, 'srcurl': None, }
+          'source': None, 'srcurl': None, 'title': None, }
 
     node = item.find('div', class_='report')
     if node is not None:
@@ -140,25 +156,34 @@ def mkentry(ident, item):
             e['source'] = node.get_text().strip()
             e['srcurl'] = node['href'].strip()
 
+    if args.lastname == 'latest':
+        node = item.find('div', class_='headline')
+        if node is not None:
+            e['title'] = node.get_text().strip()
+
     return e
 
-entries = { }
-
-# Nab the first news item---the most up to date one and give it id 0.
-item = soup.find('div', class_='playernews')
-if item is not None:
-    entries[0] = mkentry(0, item)
+# Nab the first news item for a player news page.
+# The most up to date one and give it id 0.
+if args.lastname != 'latest':
+    item = soup.find('div', class_='playernews')
+    if item is not None:
+        entries[0] = mkentry(0, item)
 
 # Now nab the rest of the news items if we want'em.
 if not args.one:
-    mnews = re.compile('cp1_ctrlPlayerNews_rptBlurbs_floatingcontainer_[0-9]+')
-    for item in soup.find_all('div', id=mnews):
-        ident = int(item['id'][item['id'].rindex('_')+1:])
+    ident = len(entries)
+    for item in soup.find_all('div', class_='pb'):
         entries[ident] = mkentry(ident, item)
+        ident += 1
 
 sep = '-' * 80
 for i in sorted(entries, reverse=True):
     e = entries[i]
+
+    if e['title'] is not None:
+        print '# %s' % e['title']
+        print
 
     print fmt(e['report'])
     print
