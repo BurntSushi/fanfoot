@@ -1,0 +1,175 @@
+#!/usr/bin/env python2
+
+import argparse
+import cStringIO as StringIO
+import re
+import subprocess
+import sys
+import urllib
+
+from bs4 import BeautifulSoup
+import httplib2
+from termcolor import colored
+
+from fanfoot import table
+
+parser = argparse.ArgumentParser(
+    description='Detect lines longer than 80 columns')
+aa = parser.add_argument
+aa('firstname', nargs='?', default='')
+aa('lastname', default='')
+aa('-one', action='store_true', help='Only show the most recent news item.')
+args = parser.parse_args()
+
+roto = 'http://www.rotoworld.com'
+roto_search = '%s/content/playersearch.aspx' % roto
+
+reg_clean = re.compile('\s+')
+
+def clean(s):
+    s, _ = reg_clean.subn(' ', s)
+    return s.strip()
+
+def news(playerurl):
+    newsurl = playerurl.replace('/player', '/recent')
+    resp, content = httplib2.Http().request('%s%s' % (roto, newsurl))
+    if resp['status'] != '200':
+        print >> sys.stderr, resp
+        sys.exit(1)
+    return content
+
+def fmt(s):
+    p = subprocess.Popen(['par', '80gqr'],
+                         stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate(s.encode('UTF-8'))
+    if len(stderr) > 0:
+        print >> sys.stderr, 'Problem running "par 80gqr": %s' % stderr
+        sys.exit(1)
+    return stdout.strip()
+
+def search(lastname, firstname=''):
+    fdata = {
+        "__VIEWSTATE": "/wEPDwUJMjg1NjcxOTA2D2QWAmYPZBYEAgEPZBYEAggPFgIeBFRleHQFUjxsaW5rIHJlbD0iY2Fub25pY2FsIiBocmVmPSJodHRwOi8vd3d3LnJvdG93b3JsZC5jb20vY29udGVudC9wbGF5ZXJzZWFyY2guYXNweCIgLz5kAh0PFgIfAAViPHNjcmlwdCBsYW5ndWFnZT0namF2YXNjcmlwdCcgdHlwZT0ndGV4dC9qYXZhc2NyaXB0JyBzcmM9Jy96bGlicy9mbHlvdXRuYXZfdjA0MDgyMDEzLmpzJz48L3NjcmlwdD5kAgMPZBYCAgMPZBYCAgMPZBYCAgUPZBYGAgEPFgIfAAUNVG9wIEhlYWRsaW5lc2QCAg8PFgIeB1Zpc2libGVoZGQCBA8PZA8QFgFmFgEWAh4OUGFyYW1ldGVyVmFsdWVlFgFmZGRkd3+0WQU0f6YHNwodqOi71xxi0zs=",
+        "__EVENTVALIDATION": "/wEWEAK2y4PKDgKHlvL3BgLA+sClCQK5vLryBgKn1MPhBAK9kM36BQKj89HmAwLA+vrmBAKk7ayNDgKj85nnAwKU87XnAwKurM6nDAK++qLmBAKD2r2iBgKQ+47mAgK//t/aB8828ASmgq7CfXAlV1hkS3stcDNQ",
+        "__EVENTTARGET": "",
+        "__EVENTARGUMENT": "",
+        "ctl00$cp1$tbFirstNameSearch": firstname,
+        "ctl00$cp1$tbLastNameSearch": lastname,
+        "ctl00$cp1$radSportSearch": "NFL",
+        "ctl00$cp1$btnAdvancedSearch": "Search",
+        "ctl00$siteheader$hidpage": "",
+        "ctl00$cp1$headlinesNFL$hidHeadlineSport": "",
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    h = httplib2.Http()
+    resp, content = h.request(roto_search, "POST",
+                              headers=headers,
+                              body=urllib.urlencode(fdata))
+    if resp['status'] == '302':
+        return news(resp['location'])
+    elif resp['status'] != '200':
+        print >> sys.stderr, resp
+        sys.exit(1)
+    return content
+
+soup = BeautifulSoup(search(args.lastname, args.firstname))
+
+# Look to see if a search results page is given. Prompt the user to make
+# a choice first.
+results = soup.find('table', id='cp1_tblSearchResults')
+if results is not None:
+    choices, ident = { }, 1
+    for row in results.find_all('tr'):
+        tds = row.find_all('td')
+        if len(tds) != 3:
+            continue
+
+        a = tds[0].find('a')
+        if a is None:
+            continue
+        url = a['href']
+
+        name, pos, team = [clean(td.get_text()) for td in tds]
+
+        choices[ident] = (url, name, pos, team)
+        ident += 1
+
+    fmted = table([['%d.' % i, choices[i][1], choices[i][2], choices[i][3]]
+                   for i in sorted(choices)])
+    print >> sys.stderr, fmted
+
+    select = int(raw_input('Please select a number: '))
+    if select not in choices:
+        print >> sys.stderr, 'Selection %d is not valid.' % select
+        sys.exit(1)
+    
+    soup = BeautifulSoup(news(choices[select][0]))
+
+# At this point, `soup` should contain the recent news page.
+# Collect all the news items and meta data before trying to show it.
+# Entries maps news id to the following fields: (Any may be None)
+#   report - The description of the event.
+#   impact - Editor's notes/opinions, typically related to Fantasy sports.
+#   date   - The day/time that the "impact" notes were added.
+#   source - The name of the source.
+#   srcurl - The URL of the source.
+def mkentry(ident, item):
+    e = { 'report': None, 'impact': None, 'date': None,
+          'source': None, 'srcurl': None, }
+
+    node = item.find('div', class_='report')
+    if node is not None:
+        e['report'] = node.get_text().strip()
+
+    node = item.find('div', class_='impact')
+    if node is not None:
+        e['impact'] = list(node.stripped_strings)[0]
+
+    node = item.find(class_='date')
+    if node is not None:
+        e['date'] = node.get_text().strip()
+
+    node = item.find('div', class_='source')
+    if node is not None:
+        node = node.find('a')
+        if node is not None:
+            e['source'] = node.get_text().strip()
+            e['srcurl'] = node['href'].strip()
+
+    return e
+
+entries = { }
+
+# Nab the first news item---the most up to date one and give it id 0.
+item = soup.find('div', class_='playernews')
+if item is not None:
+    entries[0] = mkentry(0, item)
+
+# Now nab the rest of the news items if we want'em.
+if not args.one:
+    mnews = re.compile('cp1_ctrlPlayerNews_rptBlurbs_floatingcontainer_[0-9]+')
+    for item in soup.find_all('div', id=mnews):
+        ident = int(item['id'][item['id'].rindex('_')+1:])
+        entries[ident] = mkentry(ident, item)
+
+sep = '-' * 80
+for i in sorted(entries, reverse=True):
+    e = entries[i]
+
+    print fmt(e['report'])
+    print
+
+    if e['date'] is not None:
+        print e['date']
+    if e['impact'] is not None:
+        print colored(fmt(e['impact']), 'blue', attrs=['bold'])
+    else:
+        print colored('No editor notes (yet).')
+
+    if i > 0:
+        print sep
+
