@@ -142,7 +142,7 @@ def mkentry(ident, item):
         e['report'] = node.get_text().strip()
 
     node = item.find('div', class_='impact')
-    if node is not None:
+    if node is not None and len(list(node.stripped_strings)) > 0:
         e['impact'] = list(node.stripped_strings)[0]
 
     node = item.find(class_='date')
@@ -193,7 +193,7 @@ for i in sorted(entries, reverse=True):
     if e['impact'] is not None:
         print colored(fmt(e['impact']), 'blue', attrs=['bold'])
     else:
-        print colored('No editor notes (yet).')
+        print colored('No editor notes (yet).', 'blue', attrs=['bold'])
 
     if i > 0:
         print sep
